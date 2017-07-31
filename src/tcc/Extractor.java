@@ -1,6 +1,7 @@
 package tcc;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,7 +19,7 @@ import org.apache.http.message.BasicNameValuePair;
 
 public class Extractor {
 
-    public HttpClient client;
+	private HttpClient client;
 
     Extractor (){
 
@@ -26,7 +27,7 @@ public class Extractor {
 
     }
 
-    public void login() throws ClientProtocolException, IOException {
+    private void login() throws ClientProtocolException, IOException {
 
         HttpPost post = new HttpPost("http://qualar.cetesb.sp.gov.br/qualar/autenticador");
 
@@ -37,35 +38,39 @@ public class Extractor {
         post.setEntity(new UrlEncodedFormEntity(urlParameters));
 
         HttpResponse response = client.execute(post);
-        System.out.println("Response Code : " + response.getStatusLine().getStatusCode());
+        //System.out.println("Response Code : " + response.getStatusLine().getStatusCode());
 
     }
 
-    public void extract(String station, String parameter, String date1, String date2) throws ClientProtocolException, IOException {
+    private HttpResponse extract(String station, String parameter, String date1, String date2) throws ClientProtocolException, IOException {
                 
-        HttpPost post = new HttpPost("http://qualar.cetesb.sp.gov.br/qualar/exportaDadosAvanc.do?method=exportar");
-
         List<NameValuePair> urlParameters = new ArrayList<>();
         urlParameters.add(new BasicNameValuePair("dataInicialStr", date1));
         urlParameters.add(new BasicNameValuePair("dataFinalStr", date2));
         urlParameters.add(new BasicNameValuePair("estacaoVO.nestcaMonto", station));
         urlParameters.add(new BasicNameValuePair("nparmtsSelecionados", parameter));
+        
+        HttpPost post = new HttpPost("http://qualar.cetesb.sp.gov.br/qualar/exportaDadosAvanc.do?method=exportar");
 
         post.setEntity(new UrlEncodedFormEntity(urlParameters));
         
         HttpResponse response = client.execute(post);
-        System.out.println("Response Code : " + response.getStatusLine().getStatusCode());
+        //System.out.println("Response Code : " + response.getStatusLine().getStatusCode());
+        
+        return response;
 
-        InputStream is = response.getEntity().getContent();
-        String filePath = station + "_" + parameter + ".csv";
+    }
+
+	private void saveFile(HttpResponse response) throws IOException, FileNotFoundException {
+		InputStream is = response.getEntity().getContent();
+        String filePath = "file.csv";
         FileOutputStream fos = new FileOutputStream(new File(filePath));
         int inByte;
         while((inByte = is.read()) != -1)
              fos.write(inByte);
         is.close();
         fos.close();
-
-    }
+	}
 
     public static void main(String[] args) throws ClientProtocolException, IOException {
         

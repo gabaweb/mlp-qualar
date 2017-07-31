@@ -7,16 +7,26 @@ import java.sql.Statement;
 
 public class Database {
 
-	public void create() throws ClassNotFoundException, SQLException {
+	private void create() throws ClassNotFoundException, SQLException {
 
 		Connection connection = DriverManager.getConnection("jdbc:sqlite:sample.db");
 		Statement statement = connection.createStatement();
 
-		statement.executeUpdate("drop table if exists ENTRADAS");
+		statement.executeUpdate("DROP TABLE IF EXISTS ENTRADAS");
 		statement.executeUpdate("CREATE TABLE ENTRADAS (ID INTEGER PRIMARY KEY NOT NULL, ID_VARIAVEL INTEGER NOT NULL, VALOR REAL, HORARIO TEXT NOT NULL)");
+		statement.executeUpdate("DROP TABLE IF EXISTS VARIAVEIS");
+		statement.executeUpdate("CREATE TABLE VARIAVEIS (ID INTEGER PRIMARY KEY NOT NULL, NOME TEXT NOT NULL)");
 
 		connection.close();
 
+	}
+	
+	public static void main(String[] args) throws ClassNotFoundException, SQLException {
+		
+		Database database = new Database();
+	
+		database.create();
+		
 	}
 
 }

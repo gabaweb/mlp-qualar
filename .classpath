@@ -8,16 +8,18 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
-	<classpathentry kind="lib" path="lib/commons-codec-1.9.jar"/>
-	<classpathentry kind="lib" path="lib/commons-logging-1.2.jar"/>
-	<classpathentry kind="lib" path="lib/fluent-hc-4.5.3.jar"/>
-	<classpathentry kind="lib" path="lib/httpclient-4.5.3.jar"/>
-	<classpathentry kind="lib" path="lib/httpclient-cache-4.5.3.jar"/>
-	<classpathentry kind="lib" path="lib/httpclient-win-4.5.3.jar"/>
-	<classpathentry kind="lib" path="lib/httpcore-4.4.6.jar"/>
-	<classpathentry kind="lib" path="lib/httpmime-4.5.3.jar"/>
-	<classpathentry kind="lib" path="lib/jna-4.1.0.jar"/>
-	<classpathentry kind="lib" path="lib/jna-platform-4.1.0.jar"/>
-	<classpathentry kind="lib" path="lib/sqlite-jdbc-3.19.3.jar"/>
+	<classpathentry kind="lib" path="C:/eclipse-workspace/tcc/lib/commons-codec-1.9.jar"/>
+	<classpathentry kind="lib" path="C:/eclipse-workspace/tcc/lib/commons-logging-1.2.jar"/>
+	<classpathentry kind="lib" path="C:/eclipse-workspace/tcc/lib/commons-math3-3.0.jar"/>
+	<classpathentry kind="lib" path="C:/eclipse-workspace/tcc/lib/encog-core-3.3.0.jar"/>
+	<classpathentry kind="lib" path="C:/eclipse-workspace/tcc/lib/fluent-hc-4.5.3.jar"/>
+	<classpathentry kind="lib" path="C:/eclipse-workspace/tcc/lib/httpclient-4.5.3.jar"/>
+	<classpathentry kind="lib" path="C:/eclipse-workspace/tcc/lib/httpclient-cache-4.5.3.jar"/>
+	<classpathentry kind="lib" path="C:/eclipse-workspace/tcc/lib/httpclient-win-4.5.3.jar"/>
+	<classpathentry kind="lib" path="C:/eclipse-workspace/tcc/lib/httpcore-4.4.6.jar"/>
+	<classpathentry kind="lib" path="C:/eclipse-workspace/tcc/lib/httpmime-4.5.3.jar"/>
+	<classpathentry kind="lib" path="C:/eclipse-workspace/tcc/lib/jna-4.1.0.jar"/>
+	<classpathentry kind="lib" path="C:/eclipse-workspace/tcc/lib/jna-platform-4.1.0.jar"/>
+	<classpathentry kind="lib" path="C:/eclipse-workspace/tcc/lib/sqlite-jdbc-3.19.3.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
