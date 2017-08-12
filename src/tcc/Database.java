@@ -13,7 +13,7 @@ public class Database {
 		Statement statement = connection.createStatement();
 
 		statement.executeUpdate("DROP TABLE IF EXISTS ENTRADAS");
-		statement.executeUpdate("CREATE TABLE ENTRADAS (ID INTEGER PRIMARY KEY NOT NULL, ID_VARIAVEL INTEGER NOT NULL, VALOR REAL, HORARIO TEXT NOT NULL)");
+		statement.executeUpdate("CREATE TABLE ENTRADAS (ID INTEGER PRIMARY KEY NOT NULL, ID_VARIAVEL INTEGER NOT NULL, HORARIO TEXT NOT NULL, VALOR REAL)");
 		statement.executeUpdate("DROP TABLE IF EXISTS VARIAVEIS");
 		statement.executeUpdate("CREATE TABLE VARIAVEIS (ID INTEGER PRIMARY KEY NOT NULL, NOME TEXT NOT NULL)");
 

@@ -1,157 +1,94 @@
 package tcc;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.text.ParseException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Handler {
 
-    public ArrayList<ArrayList<String>> dados;
-    public ArrayList<ArrayList<Double>> dadosTratados;
+	private void clear(String filePath) throws IOException {
 
-    public Handler(String arquivo) throws FileNotFoundException, IOException {
+		File inputFile = new File(filePath);
+		File outputFile = new File("cleaned_" + filePath);
 
-        this.dados = new ArrayList<>();
-        this.dadosTratados = new ArrayList<>();
+		BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+		BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile));
 
-        //LER
-        BufferedReader br = new BufferedReader(new FileReader(arquivo));
+		String line;
 
-        for (String linha = br.readLine(); linha != null; linha = br.readLine()) {
+		for (int x = 0; (line = reader.readLine()) != null; x++) {
+			if (line.contains(";24:00;")) {
 
-            String[] colunas = linha.split(";");
-            ArrayList<String> colunasList = new ArrayList<>(Arrays.asList(colunas));
-            dados.add(colunasList);
-        }
+				writer.write(line.replace(";24:00;", ";00:00;"));
+				writer.newLine();
 
-    }
+			} else if (x > 7) {
 
-    public ArrayList<Double> mediaColuna(int coluna) throws NumberFormatException {
-        ArrayList<Double> resultado;
-        resultado = new ArrayList<>();
-        int x = -1;
+				writer.write(line);
+				writer.newLine();
 
-        double soma;
-        int n;
+			}
 
-        while (x < dados.size() - 1) {
+		}
 
-            soma = 0;
-            n = 0;
+		reader.close();
+		writer.close();
 
-            do {
-                x++;
+	}
 
-                if (!dados.get(x).get(coluna).equals("#")) {
-                    soma = soma + Double.valueOf(dados.get(x).get(coluna));
-                    n++;
-                }
+	private ArrayList<ArrayList<String>> read(String filePath) throws IOException {
 
-            } while ((x < dados.size()) && (!dados.get(x).get(1).equals("24:00")));
+		ArrayList<ArrayList<String>> data = new ArrayList<>();
 
-            if (n == 0) {
-                resultado.add(-999.99);
+		BufferedReader br = new BufferedReader(new FileReader(filePath));
 
-            } else {
-                resultado.add(soma / n);
+		for (String linha = br.readLine(); linha != null; linha = br.readLine()) {
 
-            }
-        }
+			String[] colunas = linha.split(";");
+			ArrayList<String> colunasList = new ArrayList<>(Arrays.asList(colunas));
+			data.add(colunasList);
+		}
 
-        return resultado;
-    }
+		br.close();
 
-    public ArrayList<Double> tratarColuna(ArrayList<Double> coluna) {
-        //TRATAR DIAS FALTANTES
-        double ultimo = -999.99;
-        double proximo;
-        int y;
-        int x;
+		return data;
 
-        for (x = 0; x < coluna.size(); x++) {
+	}
 
-            if (coluna.get(x) == -999.99) {
+	private void save(ArrayList<ArrayList<String>> data) throws SQLException {
 
-                y = x + 1;
+		Connection connection = DriverManager.getConnection("jdbc:sqlite:sample.db");
 
-                while (coluna.get(y) == -999.99) {
-                    y++;
-                }
+		for (ArrayList<String> row : data) {
 
-                proximo = coluna.get(y);
+			PreparedStatement pstmt = connection.prepareStatement("INSERT INTO ENTRADAS(ID_VARIAVEL, VALOR, HORARIO) VALUES(?, ?, ?)");
+		    pstmt.setInt(1, 1);
+		    //pstmt.setString(row.get(1), 2);
+			pstmt.executeUpdate();
 
-                if (ultimo == -999.99) {
+		}
 
-                    coluna.set(x, proximo);
+	}
 
-                } else {
+	public static void main(String[] args) throws IOException {
 
-                    coluna.set(x, (ultimo + proximo) / 2);
+		Handler handler = new Handler();
 
-                }
+		handler.clear("281_12_01-01-2015_31-12-2016.csv");
 
-            } else {
-                ultimo = coluna.get(x);
-            }
+		ArrayList<ArrayList<String>> data = handler.read("281_12_01-01-2015_31-12-2016.csv");
 
-        }
-        return coluna;
-    }
-
-    public void adicionarColuna(ArrayList<Double> coluna) throws IOException {
-        
-        if (dadosTratados.isEmpty()) {
-            ArrayList<Double> linha;
-            for (Double valor : coluna) {
-                linha = new ArrayList<>();
-                linha.add(valor);
-                dadosTratados.add(linha);
-            }
-        } else {
-            for (int x = 0; x < coluna.size(); x++) {
-                dadosTratados.get(x).add(coluna.get(x));
-            }
-        }
-
-    }
-    
-
-    public void salvar() throws IOException{
-    //SALVAR
-        FileWriter arq = new FileWriter("TRATADO_UR.csv");
-        PrintWriter gravarArq = new PrintWriter(arq);
-        int x;
-        int y;
-
-        for (x = 0; x < dadosTratados.size(); x++) {
-            for (y = 0; y < dadosTratados.get(x).size(); y++) {
-                gravarArq.print(dadosTratados.get(x).get(y) + ";");
-            }
-            gravarArq.print("\n");
-        }
-        arq.close();
-    }
-
-
-    public static void main(String args[]) throws FileNotFoundException, IOException, ParseException {
-
-        //TESTAR
-        Handler csv = new Handler("BRUTO_UR.csv");
-        csv.adicionarColuna(csv.tratarColuna(csv.mediaColuna(2)));
-        //csv.adicionarColuna(csv.tratarColuna(csv.mediaColuna(3)));
-        //csv.adicionarColuna(csv.tratarColuna(csv.mediaColuna(4)));
-        //for (int x = 0; x < csv.dados.size(); x++){
-        //    System.out.println(x+" "+csv.dados.get(x).get(5));
-        //}
-        //csv.adicionarColuna(csv.tratarColuna(csv.mediaColuna(5)));
-        csv.salvar();
-
-    }
+	}
 
 }
