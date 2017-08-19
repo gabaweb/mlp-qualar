@@ -1,4 +1,4 @@
-package tcc;
+package mlp;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -10,12 +10,12 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class OldHandler {
+public class CSV {
 
     public ArrayList<ArrayList<String>> dados;
     public ArrayList<ArrayList<Double>> dadosTratados;
 
-    public OldHandler(String arquivo) throws FileNotFoundException, IOException {
+    public CSV(String arquivo) throws FileNotFoundException, IOException {
 
         this.dados = new ArrayList<>();
         this.dadosTratados = new ArrayList<>();
@@ -142,7 +142,7 @@ public class OldHandler {
     public static void main(String args[]) throws FileNotFoundException, IOException, ParseException {
 
         //TESTAR
-        OldHandler csv = new OldHandler("BRUTO_UR.csv");
+        CSV csv = new CSV("BRUTO_UR.csv");
         csv.adicionarColuna(csv.tratarColuna(csv.mediaColuna(2)));
         //csv.adicionarColuna(csv.tratarColuna(csv.mediaColuna(3)));
         //csv.adicionarColuna(csv.tratarColuna(csv.mediaColuna(4)));
