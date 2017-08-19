@@ -225,7 +225,7 @@ public class Handler {
 		
 	}
 	
-	private void removeMissingData() throws SQLException {
+	private void removeMissingData() throws SQLException, ClassNotFoundException {
 		
 		Connection connection = DriverManager.getConnection("jdbc:sqlite:sample.db");
 		
@@ -259,15 +259,15 @@ public class Handler {
 						
 			if (x == null) {
 				
-				pstmt.setInt(1, rs.getInt(1));
-				pstmt.setString(2, rs.getString(2));
+				pstmt.setInt(1, rs.getInt("ID_VARIAVEL"));
+				pstmt.setString(2, rs.getString("HORARIO"));
 				pstmt.setString(3, lastNotNull);
 								
 			} else {
 				
 				lastNotNull = rs.getString("VALOR");
-				pstmt.setInt(1, rs.getInt(1));
-				pstmt.setString(2, rs.getString(2));
+				pstmt.setInt(1, rs.getInt("ID_VARIAVEL"));
+				pstmt.setString(2, rs.getString("HORARIO"));
 				pstmt.setString(3, rs.getString("VALOR"));
 								
 			}
@@ -279,7 +279,7 @@ public class Handler {
 		pstmt.executeBatch();
 				
 		connection.commit();
-		
+				
 		connection.close();
 		
 	}
@@ -289,35 +289,24 @@ public class Handler {
 		Handler handler = new Handler();
 		
 		System.out.println("> Limpando");
-
 		handler.clear("281_12_01-01-2015_31-12-2016.csv");
-		
 		System.out.println("Limpo");
 		
 		System.out.println("> Lendo");
-
 		ArrayList<ArrayList<String>> data = handler.read("cleaned_281_12_01-01-2015_31-12-2016.csv");
-		
 		System.out.println("Lido");
 		
 		System.out.println("> Criando Database");
-		
 		Database database = new Database();
-		
 		database.create();
-		
 		System.out.println("Criado");
 		
 		System.out.println("> Salvando");
-	
 		handler.save(data);
-		
 		System.out.println("Salvo");
 		
 		System.out.println("> Tratando");
-		
 		handler.removeMissingData();
-		
 		System.out.println("Tratado");
 
 
