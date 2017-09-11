@@ -4,6 +4,12 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -28,64 +34,72 @@ import org.encog.util.csv.ReadCSV;
 
 public class MLP {
 
-    private final int INPUT_WINDOW_SIZE;
+	private int inputWindowSize;
+	private int hiddenLayerNeurons;
+	private int predictWindowSize;
+	private int numOfVariables;
+	private boolean useOutputVariableToPredict;
+	private ArrayList<NormalizedField> normalizations;
 
-    private final int HIDDEN_LAYER_NEURONS;
+	public MLP(boolean useOutputVariableToPredict, int numOfVariables, int inputWindowSize, int hiddenLayerNeurons, int predictWindowSize, ArrayList<NormalizedField> normalizations) {
 
-    private final int PREDICT_WINDOW_SIZE;
+		this.inputWindowSize = inputWindowSize;
+		this.hiddenLayerNeurons = hiddenLayerNeurons;
+		this.predictWindowSize = predictWindowSize;
+		this.numOfVariables = numOfVariables;
+		this.useOutputVariableToPredict = useOutputVariableToPredict;
+		this.normalizations = normalizations;
+		
+	}
+	
+	public TemporalMLDataSet initializeDataSet() {
+		
+		TemporalMLDataSet dataSet = new TemporalMLDataSet(inputWindowSize, predictWindowSize);
+		
+		dataSet.addDescription(new TemporalDataDescription(TemporalDataDescription.Type.RAW, useOutputVariableToPredict, true));
+		
+		for (int x = 0; x < numOfVariables; x++) {
+			dataSet.addDescription(new TemporalDataDescription(TemporalDataDescription.Type.RAW, true, false));
+		}
+		
+		return dataSet;
+	}
 
-    private final int VARIABLES;
+	
+	public TemporalMLDataSet createDataSet() throws SQLException {
+		
+		TemporalMLDataSet trainingData = initializeDataSet();
 
-    private final boolean INPUT;
+		Connection connection = DriverManager.getConnection("jdbc:sqlite:sample.db");
+		connection.setAutoCommit(false);		
+		Statement stmt = connection.createStatement();
+		ResultSet rs = stmt.executeQuery("SELECT VALOR FROM ENTRADAS_TRATADAS");
+		
+		for (int x = 0; rs.next(); x++) {
 
-    private final ArrayList<NormalizedField> NORMALIZATIONS;
+            TemporalPoint point = new TemporalPoint(trainingData.getDescriptions().size());
+            point.setSequence(x);
 
-    private final File TRANING_FILE;
+            //for (int y = 0; y < numOfVariables; y++) {
 
-    private final File VALIDATION_FILE;
+                point.setData(0, normalizations.get(0).normalize(rs.getFloat("VALOR")));
 
-    private final File TEST_FILE;
+            //}
+            
+            trainingData.getPoints().add(point);
+            
+		}
+		
+		rs.close();
+		
+        trainingData.generate();
 
-    private final int EXECUTION;
+		return trainingData;
+	}
 
-    private final Date DATE;
-
-    public MLP(boolean INPUT, int VARIABLES, int INPUT_WINDOW_SIZE, int HIDDEN_LAYER_NEURONS, int PREDICT_WINDOW_SIZE, ArrayList<NormalizedField> NORM, String DATASET, int EXECUTION, Date DATE) {
-
-        this.INPUT_WINDOW_SIZE = INPUT_WINDOW_SIZE;
-        this.HIDDEN_LAYER_NEURONS = HIDDEN_LAYER_NEURONS;
-        this.PREDICT_WINDOW_SIZE = PREDICT_WINDOW_SIZE;
-        this.VARIABLES = VARIABLES;
-        this.INPUT = INPUT;
-        this.NORMALIZATIONS = NORM;
-        this.TRANING_FILE = new File(new File(".."), DATASET + "_TREINAMENTO.csv");
-        this.VALIDATION_FILE = new File(new File(".."), DATASET + "_VALIDACAO.csv");
-        this.TEST_FILE = new File(new File(".."), DATASET + "_TESTE.csv");
-        this.EXECUTION = EXECUTION;
-        this.DATE = DATE;
-    }
-
-    public double execute() throws IOException {
-        TemporalMLDataSet trainingData = createTraining(TRANING_FILE);
-        TemporalMLDataSet validadingData = createTraining(VALIDATION_FILE);
-
-        MLRegression model = trainModel(
-                trainingData,
-                validadingData,
-                MLMethodFactory.TYPE_FEEDFORWARD,
-                "?:B->SIGMOID->" + HIDDEN_LAYER_NEURONS + ":B->SIGMOID->?",
-                MLTrainFactory.TYPE_RPROP,
-                "");
-
-        double erro = predict(TEST_FILE, model);
-
-        Encog.getInstance().shutdown();
-
-        return erro;
-    }
-
-    public TemporalMLDataSet createTraining(File rawFile) {
-        TemporalMLDataSet trainingData = initDataSet();
+	public TemporalMLDataSet createDataSetFromCSV(File rawFile) {
+		
+		TemporalMLDataSet trainingData = initializeDataSet();
         ReadCSV csv = new ReadCSV(rawFile.toString(), true, ';');
 
         for (int x = 0; csv.next(); x++) {
@@ -93,9 +107,9 @@ public class MLP {
             TemporalPoint point = new TemporalPoint(trainingData.getDescriptions().size());
             point.setSequence(x);
 
-            for (int y = 0; y < VARIABLES; y++) {
+            for (int y = 0; y < numOfVariables; y++) {
 
-                point.setData(y, NORMALIZATIONS.get(y).normalize(csv.getDouble(y)));
+                point.setData(y, normalizations.get(y).normalize(csv.getDouble(y)));
 
             }
 
@@ -108,87 +122,108 @@ public class MLP {
         return trainingData;
     }
 
-    public TemporalMLDataSet initDataSet() {
-        TemporalMLDataSet dataSet = new TemporalMLDataSet(INPUT_WINDOW_SIZE, PREDICT_WINDOW_SIZE);
-        dataSet.addDescription(new TemporalDataDescription(TemporalDataDescription.Type.RAW, INPUT, true));
-        for (int x = 0; x < VARIABLES; x++) {
-            dataSet.addDescription(new TemporalDataDescription(TemporalDataDescription.Type.RAW, true, false));
-        }
-        return dataSet;
-    }
+	public MLRegression trainModel(MLDataSet trainingData, MLDataSet validadingData, String methodName,
+			String methodArchitecture, String trainerName, String trainerArgs) {
 
-    public MLRegression trainModel(
-            MLDataSet trainingData,
-            MLDataSet validadingData,
-            String methodName,
-            String methodArchitecture,
-            String trainerName,
-            String trainerArgs) {
+		MLMethodFactory methodFactory = new MLMethodFactory();
+		MLMethod method = methodFactory.create(methodName, methodArchitecture, trainingData.getInputSize(),	trainingData.getIdealSize());
 
-        MLMethodFactory methodFactory = new MLMethodFactory();
-        MLMethod method = methodFactory.create(methodName, methodArchitecture, trainingData.getInputSize(), trainingData.getIdealSize());
+		MLTrainFactory trainFactory = new MLTrainFactory();
+		MLTrain train = trainFactory.create(method, trainingData, trainerName, trainerArgs);
 
-        MLTrainFactory trainFactory = new MLTrainFactory();
-        MLTrain train = trainFactory.create(method, trainingData, trainerName, trainerArgs);
+		SimpleEarlyStoppingStrategy stop = new SimpleEarlyStoppingStrategy(validadingData, 100);
 
-        SimpleEarlyStoppingStrategy stop = new SimpleEarlyStoppingStrategy(validadingData, 100);
+		train.addStrategy(stop);
 
-        train.addStrategy(stop);
+		int epoch = 1;
 
-        int epoch = 1;
+		while (!stop.shouldStop()) {
+			train.iteration();
+			System.out.println("Epoch #" + epoch + " Validation Error: " + stop.getValidationError());
+			epoch++;
+		}
 
-        while (!stop.shouldStop()) {
-            train.iteration();
-            System.out.println("Epoch #" + epoch + " Validation Error: " + stop.getValidationError());
-            epoch++;
-        }
+		train.finishTraining();
 
-        train.finishTraining();
+		return (MLRegression) train.getMethod();
+	}
 
-        return (MLRegression) train.getMethod();
-    }
+	public double predict(MLRegression model) throws IOException, SQLException {
 
-    public double predict(File rawFile, MLRegression model) throws IOException {
+		TemporalMLDataSet dataSet = initializeDataSet();
+		
+		Connection connection = DriverManager.getConnection("jdbc:sqlite:sample.db");
+		connection.setAutoCommit(false);		
+		Statement stmt = connection.createStatement();
+		ResultSet rs = stmt.executeQuery("SELECT VALOR FROM ENTRADAS_TRATADAS");
+						
+		NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.GERMAN);
+		double soma = 0;
+		int sequenceNumber;
+		
+		for (sequenceNumber = 0; rs.next(); sequenceNumber++) {
+			
+			// do we have enough data for a prediction yet?
+			if (dataSet.getPoints().size() >= dataSet.getInputWindowSize()) {
+				
+				// Make sure to use index 1, because the temporal data set is always one ahead
+				// of the time slice its encoding.  So for RAW data we are really encoding 0.
+				MLData modelInput = dataSet.generateInputNeuralData(1);
+				MLData modelOutput = model.compute(modelInput);
+				double prediction = normalizations.get(0).deNormalize(modelOutput.getData(0));
+				
+				// GRAVAR RESULTADO BANCO DE DADOS
 
-        TemporalMLDataSet trainingData = initDataSet();
-        ReadCSV csv = new ReadCSV(rawFile.toString(), true, ';');
+				//sequenceNumber
+				//csv.getDouble(0)
+				//prediction
+				//Math.abs(((prediction - rs.getFloat("VALOR")) / rs.getFloat("VALOR")) * 100) //error
+				
+				soma = soma + Math.abs(((prediction - rs.getFloat("VALOR")) / rs.getFloat("VALOR")) * 100);
+				
+				// Remove the earliest training element.  Unlike when we produced training data,
+				// we do not want to build up a large data set.  We just add enough data points to produce
+				// input to the model.
+				
+				dataSet.getPoints().remove(0);
+			}
+			
+			// we need a sequence number to sort the data
+			TemporalPoint point = new TemporalPoint(dataSet.getDescriptions().size());
+			point.setSequence(sequenceNumber);
+			//for (int y = 0; y < numOfVariables; y++) {
 
-        DateFormat dateFormat = new SimpleDateFormat("dd_MM_yyyy_HH_mm_ss");
-        new File(new File(".."), "\\results\\" + dateFormat.format(DATE)).mkdirs();
-        FileWriter arq = new FileWriter(new File(new File(".."), "\\results\\" + dateFormat.format(DATE) + "\\" + dateFormat.format(DATE) + "_" + EXECUTION + ".csv"));
-        PrintWriter gravarArq = new PrintWriter(arq);
-        NumberFormat nf = NumberFormat.getNumberInstance(Locale.GERMAN);
-        double soma = 0;
-        int x;
-        gravarArq.print("Dia;Real;Previsto;Erro Relativo Percentual\n");
+				point.setData(0, normalizations.get(0).normalize(rs.getFloat("VALOR")));
 
-        for (x = 0; csv.next(); x++) {
+			//}
+			dataSet.getPoints().add(point);
+		}
+		
+		// generate the time-boxed data
+		//dataSet.generate();
+		//return dataSet;
+		
+		return soma / sequenceNumber;
+	}
+	
+	public double execute() throws IOException, SQLException {
+		
+    	TemporalMLDataSet trainingData = createDataSet();
+    	TemporalMLDataSet validadingData = createDataSet();
 
-            if (trainingData.getPoints().size() >= trainingData.getInputWindowSize()) {
+        MLRegression model = trainModel(
+                trainingData,
+                validadingData,
+                MLMethodFactory.TYPE_FEEDFORWARD,
+                "?:B->SIGMOID->" + hiddenLayerNeurons + ":B->SIGMOID->?",
+                MLTrainFactory.TYPE_RPROP,
+                "");
 
-                MLData modelInput = trainingData.generateInputNeuralData(1);
-                MLData modelOutput = model.compute(modelInput);
-                double MP = NORMALIZATIONS.get(0).deNormalize(modelOutput.getData(0));
+        double erro = predict(model);
 
-                gravarArq.print(x + ";" + nf.format(csv.getDouble(0)) + ";" + nf.format(MP) + ";" + nf.format(Math.abs(((MP - csv.getDouble(0)) / csv.getDouble(0)) * 100)) + "\n");
-                soma = soma + Math.abs(((MP - csv.getDouble(0)) / csv.getDouble(0)) * 100);
-
-                trainingData.getPoints().remove(0);
-            }
-
-            TemporalPoint point = new TemporalPoint(trainingData.getDescriptions().size());
-            point.setSequence(x);
-            for (int y = 0; y < VARIABLES; y++) {
-
-                point.setData(y, NORMALIZATIONS.get(y).normalize(csv.getDouble(y)));
-
-            }
-            trainingData.getPoints().add(point);
-        }
-        arq.close();
-        csv.close();
-
-        trainingData.generate();
-        return soma / x;
+        Encog.getInstance().shutdown();
+        
+        return erro;
+        
     }
 }

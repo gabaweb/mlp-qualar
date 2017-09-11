@@ -80,12 +80,13 @@ public class Extractor {
 
 		// Limeira
 
-		extractor.saveFile(extractor.extract("281", "12", "01/01/2015", "31/12/2016"),
-				"281_12_01-01-2015_31-12-2016.csv"); // MP10
-		extractor.saveFile(extractor.extract("281", "23", "01/01/2015", "31/12/2016"),
-				"281_23_01-01-2015_31-12-2016.csv"); // DV
-		extractor.saveFile(extractor.extract("281", "24", "01/01/2015", "31/12/2016"),
-				"281_24_01-01-2015_31-12-2016.csv"); // VV
+		extractor.saveFile(extractor.extract("281", "12", "11/09/2014", "11/09/2017"), "281_Limeira_MP10.csv"); //281_Limeira_MP10
+		extractor.saveFile(extractor.extract("113", "12", "11/09/2014", "11/09/2017"), "113_Piracicaba_MP10.csv"); //113_Piracicaba_MP10
+		extractor.saveFile(extractor.extract("89",  "12", "11/09/2014", "11/09/2017"), "89_Campinas-Centro_MP10.csv"); //89_Campinas-Centro_MP10
+		extractor.saveFile(extractor.extract("276", "12", "11/09/2014", "11/09/2017"), "276_Campinas-Taquaral_MP10.csv"); //276_Campinas-Taquaral_MP10
+		
+		//extractor.saveFile(extractor.extract("281", "23", "01/01/2015", "31/12/2016"), "281_23_01-01-2015_31-12-2016.csv"); // DV
+		//extractor.saveFile(extractor.extract("281", "24", "01/01/2015", "31/12/2016"), "281_24_01-01-2015_31-12-2016.csv"); // VV
 
 	}
 

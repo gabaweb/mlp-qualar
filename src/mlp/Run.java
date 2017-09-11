@@ -37,7 +37,7 @@ public class Run {
         //normalizations.add(new NormalizedField(NormalizationAction.Normalize, "VV", 10, 0, 1, 0));
 
         for (int x = 1; x <= repetitions; x++) {
-            results.add(new MLP(input,
+            results.add(new OldMLP(input,
                     variables,
                     inputWindowSize,
                     hiddenLayerNeurons,

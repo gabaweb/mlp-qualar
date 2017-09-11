@@ -10,12 +10,12 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class CSV {
+public class OldCSV {
 
     public ArrayList<ArrayList<String>> dados;
     public ArrayList<ArrayList<Double>> dadosTratados;
 
-    public CSV(String arquivo) throws FileNotFoundException, IOException {
+    public OldCSV(String arquivo) throws FileNotFoundException, IOException {
 
         this.dados = new ArrayList<>();
         this.dadosTratados = new ArrayList<>();
@@ -142,7 +142,7 @@ public class CSV {
     public static void main(String args[]) throws FileNotFoundException, IOException, ParseException {
 
         //TESTAR
-        CSV csv = new CSV("BRUTO_UR.csv");
+        OldCSV csv = new OldCSV("BRUTO_UR.csv");
         csv.adicionarColuna(csv.tratarColuna(csv.mediaColuna(2)));
         //csv.adicionarColuna(csv.tratarColuna(csv.mediaColuna(3)));
         //csv.adicionarColuna(csv.tratarColuna(csv.mediaColuna(4)));

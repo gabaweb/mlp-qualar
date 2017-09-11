@@ -185,31 +185,31 @@ public class Handler {
 
 	}
 
-	private void save(ArrayList<ArrayList<String>> data) throws SQLException, ParseException {
+	private void save(ArrayList<ArrayList<String>> data, int station) throws SQLException, ParseException {
 
 		Connection connection = DriverManager.getConnection("jdbc:sqlite:sample.db");
-		
 		connection.setAutoCommit(false);
 		
-		PreparedStatement pstmt = connection.prepareStatement("INSERT INTO ENTRADAS(ID_VARIAVEL, HORARIO, VALOR) VALUES(?, ?, ?)");
+		PreparedStatement pstmt = connection.prepareStatement("INSERT INTO ENTRADAS (ID_ESTACAO, ID_VARIAVEL, HORARIO, VALOR) VALUES(?, ?, ?, ?)");
 		
 		DateFormat csvFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 		DateFormat sqliteFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 				
 		for (ArrayList<String> row : data) {
 
-			pstmt.setInt(1, 1);
+			pstmt.setInt(1, station);
+			pstmt.setInt(2, 1);
 									
-			pstmt.setString(2, sqliteFormat.format(csvFormat.parse(row.get(0) + " " + row.get(1))));
+			pstmt.setString(3, sqliteFormat.format(csvFormat.parse(row.get(0) + " " + row.get(1))));
 			
 			if (row.size() == 3) {
 				
-			    pstmt.setString(3, row.get(2));
+			    pstmt.setString(4, row.get(2));
 			    
 			}
 			else {
 				
-				pstmt.setString(3, null);
+				pstmt.setString(4, null);
 				
 			}
 			
@@ -231,7 +231,7 @@ public class Handler {
 		
 		connection.setAutoCommit(false);
 		
-		PreparedStatement pstmt = connection.prepareStatement("INSERT INTO ENTRADAS_TRATADAS(ID_VARIAVEL, HORARIO, VALOR) VALUES(?, ?, ?)");
+		PreparedStatement pstmt = connection.prepareStatement("INSERT INTO ENTRADAS_TRATADAS (ID_ESTACAO, ID_VARIAVEL, HORARIO, VALOR) VALUES(?, ?, ?, ?)");
 		
 		Statement stmt = connection.createStatement();
 		ResultSet rs = stmt.executeQuery("SELECT * FROM ENTRADAS");
@@ -259,16 +259,18 @@ public class Handler {
 						
 			if (x == null) {
 				
-				pstmt.setInt(1, rs.getInt("ID_VARIAVEL"));
-				pstmt.setString(2, rs.getString("HORARIO"));
-				pstmt.setString(3, lastNotNull);
+				pstmt.setInt(1, rs.getInt("ID_ESTACAO"));
+				pstmt.setInt(2, rs.getInt("ID_VARIAVEL"));
+				pstmt.setString(3, rs.getString("HORARIO"));
+				pstmt.setString(4, lastNotNull);
 								
 			} else {
 				
 				lastNotNull = rs.getString("VALOR");
-				pstmt.setInt(1, rs.getInt("ID_VARIAVEL"));
-				pstmt.setString(2, rs.getString("HORARIO"));
-				pstmt.setString(3, rs.getString("VALOR"));
+				pstmt.setInt(1, rs.getInt("ID_ESTACAO"));
+				pstmt.setInt(2, rs.getInt("ID_VARIAVEL"));
+				pstmt.setString(3, rs.getString("HORARIO"));
+				pstmt.setString(4, rs.getString("VALOR"));
 								
 			}
 			
@@ -288,21 +290,24 @@ public class Handler {
 		
 		Handler handler = new Handler();
 		
+		int station = 281;
+		String file = "281_Limeira_MP10"; 
+		
 		System.out.println("> Limpando");
-		handler.clear("281_12_01-01-2015_31-12-2016.csv");
+		handler.clear(file + ".csv");
 		System.out.println("Limpo");
 		
 		System.out.println("> Lendo");
-		ArrayList<ArrayList<String>> data = handler.read("cleaned_281_12_01-01-2015_31-12-2016.csv");
+		ArrayList<ArrayList<String>> data = handler.read("cleaned_" + file + ".csv");
 		System.out.println("Lido");
 		
-		System.out.println("> Criando Database");
-		Database database = new Database();
-		database.create();
-		System.out.println("Criado");
+		//System.out.println("> Criando Database");
+		//Database database = new Database();
+		//database.create();
+		//System.out.println("Criado");
 		
 		System.out.println("> Salvando");
-		handler.save(data);
+		handler.save(data, station);
 		System.out.println("Salvo");
 		
 		System.out.println("> Tratando");
