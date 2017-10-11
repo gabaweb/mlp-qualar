@@ -290,8 +290,8 @@ public class Handler {
 		
 		Handler handler = new Handler();
 		
-		int station = 281;
-		String file = "281_Limeira_MP10"; 
+		int station = 113;
+		String file = "113_Piracicaba_MP10"; 
 		
 		System.out.println("> Limpando");
 		handler.clear(file + ".csv");
