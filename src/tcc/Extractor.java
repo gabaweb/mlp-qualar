@@ -5,7 +5,18 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.http.HttpResponse;
@@ -42,8 +53,7 @@ public class Extractor {
 
 	}
 
-	private HttpResponse extract(String station, String parameter, String date1, String date2)
-			throws ClientProtocolException, IOException {
+	private HttpResponse extract(String station, String parameter, String date1, String date2) throws ClientProtocolException, IOException {
 
 		List<NameValuePair> urlParameters = new ArrayList<>();
 		urlParameters.add(new BasicNameValuePair("dataInicialStr", date1));
@@ -72,21 +82,27 @@ public class Extractor {
 		fos.close();
 	}
 
-	public static void main(String[] args) throws ClientProtocolException, IOException {
+	public static void main(String[] args) throws ClientProtocolException, IOException, SQLException {
+
+		String station = "113";
 
 		Extractor extractor = new Extractor();
 
 		extractor.login();
 
-		// Limeira
+		Connection connection = DriverManager.getConnection("jdbc:sqlite:sample.db");
+		connection.setAutoCommit(false);
+		Statement stmt = connection.createStatement();
+		ResultSet rs = stmt.executeQuery("select date(horario) horario from ENTRADAS_TRATADAS_DIARIO WHERE ID_ESTACAO = " + station + " order by horario desc LIMIT 1;");
 
-		extractor.saveFile(extractor.extract("281", "12", "11/09/2014", "11/09/2017"), "281_Limeira_MP10.csv"); //281_Limeira_MP10
-		extractor.saveFile(extractor.extract("113", "12", "11/09/2014", "11/09/2017"), "113_Piracicaba_MP10.csv"); //113_Piracicaba_MP10
-		extractor.saveFile(extractor.extract("89",  "12", "11/09/2014", "11/09/2017"), "89_Campinas-Centro_MP10.csv"); //89_Campinas-Centro_MP10
-		extractor.saveFile(extractor.extract("276", "12", "11/09/2014", "11/09/2017"), "276_Campinas-Taquaral_MP10.csv"); //276_Campinas-Taquaral_MP10
-		
-		//extractor.saveFile(extractor.extract("281", "23", "01/01/2015", "31/12/2016"), "281_23_01-01-2015_31-12-2016.csv"); // DV
-		//extractor.saveFile(extractor.extract("281", "24", "01/01/2015", "31/12/2016"), "281_24_01-01-2015_31-12-2016.csv"); // VV
+		String lastdate = rs.getString("horario");
+		LocalDate datetime = LocalDate.parse(lastdate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+		lastdate = datetime.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+
+		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		Date date = new Date();
+
+		extractor.saveFile(extractor.extract("113", "12", lastdate, dateFormat.format(date)), "113_Piracicaba_MP10.csv"); // 113_Piracicaba_MP10
 
 	}
 

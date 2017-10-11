@@ -15,6 +15,9 @@ import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -180,6 +183,12 @@ public class Handler {
 		}
 
 		br.close();
+		
+		for (int x = data.size()-1; data.get(x).size() != 3; x--) {
+			
+			data.remove(x);
+		
+		}
 
 		return data;
 
@@ -189,131 +198,144 @@ public class Handler {
 
 		Connection connection = DriverManager.getConnection("jdbc:sqlite:sample.db");
 		connection.setAutoCommit(false);
-		
+
+		Statement stmt = connection.createStatement();
+		ResultSet rs = stmt.executeQuery("select horario from ENTRADAS_TRATADAS WHERE ID_ESTACAO = " + station + " order by horario desc LIMIT 1;");
+		LocalDateTime lastDateTime = LocalDateTime.parse(rs.getString("horario"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+
 		PreparedStatement pstmt = connection.prepareStatement("INSERT INTO ENTRADAS (ID_ESTACAO, ID_VARIAVEL, HORARIO, VALOR) VALUES(?, ?, ?, ?)");
-		
+
 		DateFormat csvFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 		DateFormat sqliteFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-				
+
+		LocalDateTime csvDateTime;
+
 		for (ArrayList<String> row : data) {
 
-			pstmt.setInt(1, station);
-			pstmt.setInt(2, 1);
-									
-			pstmt.setString(3, sqliteFormat.format(csvFormat.parse(row.get(0) + " " + row.get(1))));
-			
-			if (row.size() == 3) {
-				
-			    pstmt.setString(4, row.get(2));
-			    
+			csvDateTime = LocalDateTime.parse(row.get(0) + " " + row.get(1), DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+
+			if (csvDateTime.isAfter(lastDateTime)) {
+
+				pstmt.setInt(1, station);
+				pstmt.setInt(2, 1);
+
+				pstmt.setString(3, sqliteFormat.format(csvFormat.parse(row.get(0) + " " + row.get(1))));
+
+				if (row.size() == 3) {
+
+					pstmt.setString(4, row.get(2));
+
+				} else {
+
+					pstmt.setString(4, null);
+
+				}
+
+				pstmt.addBatch();
+
 			}
-			else {
-				
-				pstmt.setString(4, null);
-				
-			}
-			
-			pstmt.addBatch();
 
 		}
-		
+
 		pstmt.executeBatch();
-		
+
 		connection.commit();
-		
+
 		connection.close();
-		
+
 	}
-	
+
 	private void removeMissingData() throws SQLException, ClassNotFoundException {
-		
+
 		Connection connection = DriverManager.getConnection("jdbc:sqlite:sample.db");
-		
+
 		connection.setAutoCommit(false);
 		
-		PreparedStatement pstmt = connection.prepareStatement("INSERT INTO ENTRADAS_TRATADAS (ID_ESTACAO, ID_VARIAVEL, HORARIO, VALOR) VALUES(?, ?, ?, ?)");
-		
 		Statement stmt = connection.createStatement();
+		stmt.executeUpdate("DELETE FROM ENTRADAS_TRATADAS");
+
+		PreparedStatement pstmt = connection.prepareStatement("INSERT INTO ENTRADAS_TRATADAS (ID_ESTACAO, ID_VARIAVEL, HORARIO, VALOR) VALUES(?, ?, ?, ?)");
+
+		stmt = connection.createStatement();
 		ResultSet rs = stmt.executeQuery("SELECT * FROM ENTRADAS");
-		
+
 		String lastNotNull = null;
-		
+
 		rs.next();
-		
+
 		String x = rs.getString("VALOR");
-						
+
 		while (x == null) {
 			rs.next();
 			x = rs.getString("VALOR");
 		}
-		
+
 		lastNotNull = rs.getString("VALOR");
-		
+
 		rs.close();
-		
+
 		rs = stmt.executeQuery("SELECT * FROM ENTRADAS");
-		
+
 		while (rs.next()) {
-			
+
 			x = rs.getString("VALOR");
-						
+
 			if (x == null) {
-				
+
 				pstmt.setInt(1, rs.getInt("ID_ESTACAO"));
 				pstmt.setInt(2, rs.getInt("ID_VARIAVEL"));
 				pstmt.setString(3, rs.getString("HORARIO"));
 				pstmt.setString(4, lastNotNull);
-								
+
 			} else {
-				
+
 				lastNotNull = rs.getString("VALOR");
 				pstmt.setInt(1, rs.getInt("ID_ESTACAO"));
 				pstmt.setInt(2, rs.getInt("ID_VARIAVEL"));
 				pstmt.setString(3, rs.getString("HORARIO"));
 				pstmt.setString(4, rs.getString("VALOR"));
-								
+
 			}
-			
+
 			pstmt.addBatch();
-			
+
 		}
-		
+
 		pstmt.executeBatch();
-				
+
 		connection.commit();
-				
+
 		connection.close();
-		
+
 	}
 
 	public static void main(String[] args) throws IOException, SQLException, ParseException, ClassNotFoundException {
-		
+
 		Handler handler = new Handler();
-		
+
 		int station = 113;
-		String file = "113_Piracicaba_MP10"; 
-		
+		String file = "113_Piracicaba_MP10";
+
 		System.out.println("> Limpando");
 		handler.clear(file + ".csv");
 		System.out.println("Limpo");
-		
+
 		System.out.println("> Lendo");
 		ArrayList<ArrayList<String>> data = handler.read("cleaned_" + file + ".csv");
 		System.out.println("Lido");
-		
-		//System.out.println("> Criando Database");
-		//Database database = new Database();
-		//database.create();
-		//System.out.println("Criado");
-		
+
+		// System.out.println("> Criando Database");
+		// Database database = new Database();
+		// database.create();
+		// System.out.println("Criado");
+
 		System.out.println("> Salvando");
 		handler.save(data, station);
 		System.out.println("Salvo");
-		
+
 		System.out.println("> Tratando");
 		handler.removeMissingData();
 		System.out.println("Tratado");
-
 
 	}
 

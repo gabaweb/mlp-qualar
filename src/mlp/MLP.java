@@ -42,8 +42,7 @@ public class MLP {
 	private ArrayList<NormalizedField> normalizations;
 	private String station;
 
-	public MLP(boolean useOutputVariableToPredict, int numOfVariables, int inputWindowSize, int hiddenLayerNeurons,
-			int predictWindowSize, ArrayList<NormalizedField> normalizations, String station) {
+	public MLP(boolean useOutputVariableToPredict, int numOfVariables, int inputWindowSize, int hiddenLayerNeurons, int predictWindowSize, ArrayList<NormalizedField> normalizations, String station) {
 
 		this.inputWindowSize = inputWindowSize;
 		this.hiddenLayerNeurons = hiddenLayerNeurons;
@@ -59,8 +58,7 @@ public class MLP {
 
 		TemporalMLDataSet dataSet = new TemporalMLDataSet(inputWindowSize, predictWindowSize);
 
-		dataSet.addDescription(
-				new TemporalDataDescription(TemporalDataDescription.Type.RAW, useOutputVariableToPredict, true));
+		dataSet.addDescription(new TemporalDataDescription(TemporalDataDescription.Type.RAW, useOutputVariableToPredict, true));
 
 		for (int x = 0; x < numOfVariables; x++) {
 			dataSet.addDescription(new TemporalDataDescription(TemporalDataDescription.Type.RAW, true, false));
@@ -77,9 +75,9 @@ public class MLP {
 		connection.setAutoCommit(false);
 		Statement stmt = connection.createStatement();
 		ResultSet rs = stmt.executeQuery("select datetime(horario, '-1 year') lastdatetime from ENTRADAS_TRATADAS_DIARIO WHERE ID_ESTACAO = " + station + " order by horario desc LIMIT 1;");
-		
+
 		String lastdatetime = rs.getString("lastdatetime");
-		
+
 		stmt = connection.createStatement();
 		rs = stmt.executeQuery("SELECT VALOR FROM ENTRADAS_TRATADAS_DIARIO where horario < '" + lastdatetime + "' AND ID_ESTACAO = " + station + " order by horario desc");
 
@@ -104,7 +102,7 @@ public class MLP {
 
 		return trainingData;
 	}
-	
+
 	public TemporalMLDataSet createValidadingDataSet() throws SQLException {
 
 		TemporalMLDataSet trainingData = initializeDataSet();
@@ -113,9 +111,9 @@ public class MLP {
 		connection.setAutoCommit(false);
 		Statement stmt = connection.createStatement();
 		ResultSet rs = stmt.executeQuery("select datetime(horario, '-1 year') lastdatetime from ENTRADAS_TRATADAS_DIARIO WHERE ID_ESTACAO = " + station + " order by horario desc LIMIT 1;");
-		
+
 		String lastdatetime = rs.getString("lastdatetime");
-		
+
 		stmt = connection.createStatement();
 		rs = stmt.executeQuery("SELECT VALOR FROM ENTRADAS_TRATADAS_DIARIO where horario > '" + lastdatetime + "' AND ID_ESTACAO = " + station + " order by horario desc");
 
@@ -141,12 +139,10 @@ public class MLP {
 		return trainingData;
 	}
 
-	public MLRegression trainModel(MLDataSet trainingData, MLDataSet validadingData, String methodName,
-			String methodArchitecture, String trainerName, String trainerArgs) {
+	public MLRegression trainModel(MLDataSet trainingData, MLDataSet validadingData, String methodName, String methodArchitecture, String trainerName, String trainerArgs) {
 
 		MLMethodFactory methodFactory = new MLMethodFactory();
-		MLMethod method = methodFactory.create(methodName, methodArchitecture, trainingData.getInputSize(),
-				trainingData.getIdealSize());
+		MLMethod method = methodFactory.create(methodName, methodArchitecture, trainingData.getInputSize(), trainingData.getIdealSize());
 
 		MLTrainFactory trainFactory = new MLTrainFactory();
 		MLTrain train = trainFactory.create(method, trainingData, trainerName, trainerArgs);
@@ -204,7 +200,7 @@ public class MLP {
 			}
 
 		}
-		
+
 		return prediction;
 	}
 
