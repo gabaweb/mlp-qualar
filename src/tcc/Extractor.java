@@ -5,18 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.http.HttpResponse;
@@ -32,13 +21,13 @@ public class Extractor {
 
 	private HttpClient client;
 
-	Extractor() {
+	public Extractor() {
 
 		client = HttpClientBuilder.create().build();
 
 	}
 
-	private void login() throws ClientProtocolException, IOException {
+	public void login() throws ClientProtocolException, IOException {
 
 		HttpPost post = new HttpPost("http://qualar.cetesb.sp.gov.br/qualar/autenticador");
 
@@ -53,12 +42,12 @@ public class Extractor {
 
 	}
 
-	private HttpResponse extract(String station, String parameter, String date1, String date2) throws ClientProtocolException, IOException {
+	public HttpResponse extract(Integer station, String parameter, String date1, String date2) throws ClientProtocolException, IOException {
 
 		List<NameValuePair> urlParameters = new ArrayList<>();
 		urlParameters.add(new BasicNameValuePair("dataInicialStr", date1));
 		urlParameters.add(new BasicNameValuePair("dataFinalStr", date2));
-		urlParameters.add(new BasicNameValuePair("estacaoVO.nestcaMonto", station));
+		urlParameters.add(new BasicNameValuePair("estacaoVO.nestcaMonto", station.toString()));
 		urlParameters.add(new BasicNameValuePair("nparmtsSelecionados", parameter));
 
 		HttpPost post = new HttpPost("http://qualar.cetesb.sp.gov.br/qualar/exportaDadosAvanc.do?method=exportar");
@@ -72,7 +61,7 @@ public class Extractor {
 
 	}
 
-	private void saveFile(HttpResponse response, String filePath) throws IOException, FileNotFoundException {
+	public void saveFile(HttpResponse response, String filePath) throws IOException, FileNotFoundException {
 		InputStream is = response.getEntity().getContent();
 		FileOutputStream fos = new FileOutputStream(new File(filePath));
 		int inByte;
@@ -80,30 +69,6 @@ public class Extractor {
 			fos.write(inByte);
 		is.close();
 		fos.close();
-	}
-
-	public static void main(String[] args) throws ClientProtocolException, IOException, SQLException {
-
-		String station = "113";
-
-		Extractor extractor = new Extractor();
-
-		extractor.login();
-
-		Connection connection = DriverManager.getConnection("jdbc:sqlite:sample.db");
-		connection.setAutoCommit(false);
-		Statement stmt = connection.createStatement();
-		ResultSet rs = stmt.executeQuery("select date(horario) horario from ENTRADAS_TRATADAS_DIARIO WHERE ID_ESTACAO = " + station + " order by horario desc LIMIT 1;");
-
-		String lastdate = rs.getString("horario");
-		LocalDate datetime = LocalDate.parse(lastdate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-		lastdate = datetime.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-
-		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-		Date date = new Date();
-
-		extractor.saveFile(extractor.extract("113", "12", lastdate, dateFormat.format(date)), "113_Piracicaba_MP10.csv"); // 113_Piracicaba_MP10
-
 	}
 
 }

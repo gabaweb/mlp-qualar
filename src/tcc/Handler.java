@@ -15,16 +15,14 @@ import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 
 public class Handler {
 
-	private void clear(String filePath) throws IOException {
+	public void clear(String filePath) throws IOException {
 
 		File inputFile = new File(filePath);
 		File outputFile = new File("cleaned_" + filePath);
@@ -169,7 +167,7 @@ public class Handler {
 
 	}
 
-	private ArrayList<ArrayList<String>> read(String filePath) throws IOException {
+	public ArrayList<ArrayList<String>> read(String filePath) throws IOException {
 
 		ArrayList<ArrayList<String>> data = new ArrayList<>();
 
@@ -194,14 +192,16 @@ public class Handler {
 
 	}
 
-	private void save(ArrayList<ArrayList<String>> data, int station) throws SQLException, ParseException {
+	public void save(ArrayList<ArrayList<String>> data, int station) throws SQLException, ParseException {
 
-		Connection connection = DriverManager.getConnection("jdbc:sqlite:sample.db");
+		Connection connection = DriverManager.getConnection("jdbc:sqlite:database.db");
 		connection.setAutoCommit(false);
 
 		Statement stmt = connection.createStatement();
-		ResultSet rs = stmt.executeQuery("select horario from ENTRADAS_TRATADAS WHERE ID_ESTACAO = " + station + " order by horario desc LIMIT 1;");
+		ResultSet rs = stmt.executeQuery("select horario from ENTRADAS WHERE ID_ESTACAO = " + station + " order by horario desc LIMIT 1;");
 		LocalDateTime lastDateTime = LocalDateTime.parse(rs.getString("horario"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+		rs.close();
+		stmt.close();
 
 		PreparedStatement pstmt = connection.prepareStatement("INSERT INTO ENTRADAS (ID_ESTACAO, ID_VARIAVEL, HORARIO, VALOR) VALUES(?, ?, ?, ?)");
 
@@ -240,14 +240,16 @@ public class Handler {
 		pstmt.executeBatch();
 
 		connection.commit();
+		
+		pstmt.close();
 
 		connection.close();
 
 	}
 
-	private void removeMissingData() throws SQLException, ClassNotFoundException {
+	public void removeMissingData() throws SQLException, ClassNotFoundException {
 
-		Connection connection = DriverManager.getConnection("jdbc:sqlite:sample.db");
+		Connection connection = DriverManager.getConnection("jdbc:sqlite:database.db");
 
 		connection.setAutoCommit(false);
 		
@@ -306,36 +308,6 @@ public class Handler {
 		connection.commit();
 
 		connection.close();
-
-	}
-
-	public static void main(String[] args) throws IOException, SQLException, ParseException, ClassNotFoundException {
-
-		Handler handler = new Handler();
-
-		int station = 113;
-		String file = "113_Piracicaba_MP10";
-
-		System.out.println("> Limpando");
-		handler.clear(file + ".csv");
-		System.out.println("Limpo");
-
-		System.out.println("> Lendo");
-		ArrayList<ArrayList<String>> data = handler.read("cleaned_" + file + ".csv");
-		System.out.println("Lido");
-
-		// System.out.println("> Criando Database");
-		// Database database = new Database();
-		// database.create();
-		// System.out.println("Criado");
-
-		System.out.println("> Salvando");
-		handler.save(data, station);
-		System.out.println("Salvo");
-
-		System.out.println("> Tratando");
-		handler.removeMissingData();
-		System.out.println("Tratado");
 
 	}
 

@@ -9,7 +9,7 @@ public class Database {
 
 	public void create() throws ClassNotFoundException, SQLException {
 
-		Connection connection = DriverManager.getConnection("jdbc:sqlite:sample.db");
+		Connection connection = DriverManager.getConnection("jdbc:sqlite:database.db");
 		Statement statement = connection.createStatement();
 
 		statement.executeUpdate("DROP TABLE IF EXISTS ENTRADAS");
@@ -33,6 +33,9 @@ public class Database {
 		statement.executeUpdate("DROP VIEW IF EXISTS ENTRADAS_TRATADAS_DIARIO");
 		statement.executeUpdate("CREATE VIEW ENTRADAS_TRATADAS_DIARIO AS SELECT ID, ID_ESTACAO, ID_VARIAVEL, DATE(HORARIO) HORARIO, AVG(VALOR) VALOR FROM ENTRADAS_TRATADAS GROUP BY ID_ESTACAO, DATE(HORARIO)");
 
+		statement.executeUpdate("INSERT INTO ENTRADAS (ID, ID_ESTACAO, ID_VARIAVEL, HORARIO, VALOR) VALUES (1, 113,1,'2014-09-11 00:00',138.0)");
+
+		statement.close();
 		connection.close();
 
 	}
