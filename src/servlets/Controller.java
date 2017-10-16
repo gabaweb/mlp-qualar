@@ -62,36 +62,36 @@ public class Controller extends HttpServlet {
 						
 			extractor.saveFile(extractor.extract(station, "12", lastdate, dateFormat.format(date)), file + ".csv");
 												
-//			Handler handler = new Handler();
-//			handler.clear(file + ".csv");
-//			ArrayList<ArrayList<String>> data = handler.read("cleaned_" + file + ".csv");
-//			handler.save(data, station);
-//			handler.removeMissingData();
-//						
-//			boolean useOutputVariableToPredict = true;
-//	        int numOfVariables = 1;
-//	        int inputWindowSize = 4;
-//	        int hiddenLayerNeurons = 22;
-//	        int predictWindowSize = 1;
-//	        
-//	        ArrayList<NormalizedField> normalizations = new ArrayList<>();
-//	        
-//	        normalizations.add(new NormalizedField(NormalizationAction.Normalize, "MP", 100, 0, 1, 0));
-//	        //normalizations.add(new NormalizedField(NormalizationAction.Normalize, "TEMP", 50, 0, 1, 0));
-//	        //normalizations.add(new NormalizedField(NormalizationAction.Normalize, "UR", 100, 0, 1, 0));
-//	        //normalizations.add(new NormalizedField(NormalizationAction.Normalize, "VV", 10, 0, 1, 0));
-//
-//	        double prediction = new MLP(useOutputVariableToPredict, numOfVariables, inputWindowSize, hiddenLayerNeurons, predictWindowSize, normalizations, station).execute();
-//	        
-//	        System.out.println(prediction);
-//	        
-//	        response.setContentType("text/html");
-//	        PrintWriter out = response.getWriter();
-//			
-//			out.print("Previsão: "+ prediction);
+			Handler handler = new Handler();
+			handler.clear(file + ".csv");
+			ArrayList<ArrayList<String>> data = handler.read("cleaned_" + file + ".csv");
+			handler.save(data, station);
+			handler.removeMissingData();
+						
+			boolean useOutputVariableToPredict = true;
+	        int numOfVariables = 1;
+	        int inputWindowSize = 4;
+	        int hiddenLayerNeurons = 22;
+	        int predictWindowSize = 1;
+	        
+	        ArrayList<NormalizedField> normalizations = new ArrayList<>();
+	        
+	        normalizations.add(new NormalizedField(NormalizationAction.Normalize, "MP", 100, 0, 1, 0));
+	        //normalizations.add(new NormalizedField(NormalizationAction.Normalize, "TEMP", 50, 0, 1, 0));
+	        //normalizations.add(new NormalizedField(NormalizationAction.Normalize, "UR", 100, 0, 1, 0));
+	        //normalizations.add(new NormalizedField(NormalizationAction.Normalize, "VV", 10, 0, 1, 0));
+
+	        double prediction = new MLP(useOutputVariableToPredict, numOfVariables, inputWindowSize, hiddenLayerNeurons, predictWindowSize, normalizations, station).execute();
+	        
+	        System.out.println(prediction);
+	        
+	        response.setContentType("text/html");
+	        PrintWriter out = response.getWriter();
+			
+			out.print("Previsão: "+ prediction);
 
 		
-		} catch (SQLException | ClassNotFoundException e) {
+		} catch (SQLException | ClassNotFoundException | ParseException e) {
 			throw new ServletException(e);
 		}
 		

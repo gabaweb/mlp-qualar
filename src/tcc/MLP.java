@@ -65,9 +65,9 @@ public class MLP {
 		connection.setAutoCommit(false);
 		Statement stmt = connection.createStatement();
 		ResultSet rs = stmt.executeQuery("select datetime(horario, '-1 year') lastdatetime from ENTRADAS_TRATADAS_DIARIO WHERE ID_ESTACAO = " + station + " order by horario desc LIMIT 1;");
+		String lastdatetime = rs.getString("lastdatetime");
 		rs.close();
 		stmt.close();
-		String lastdatetime = rs.getString("lastdatetime");
 
 		stmt = connection.createStatement();
 		rs = stmt.executeQuery("SELECT VALOR FROM ENTRADAS_TRATADAS_DIARIO where horario < '" + lastdatetime + "' AND ID_ESTACAO = " + station + " order by horario desc");
