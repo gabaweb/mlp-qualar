@@ -1,4 +1,4 @@
-package run;
+package test;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -8,9 +8,9 @@ import org.encog.util.arrayutil.NormalizedField;
 
 import tcc.MLP;
 
-public class RunMLP {
+public class TestMLP {
 
-	public static void main(String[] args) throws IOException, SQLException {
+	public static void main(String[] args) throws IOException, SQLException, ClassNotFoundException {
         
         boolean useOutputVariableToPredict = true;
         int numOfVariables = 1;

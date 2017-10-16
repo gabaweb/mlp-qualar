@@ -1,4 +1,4 @@
-package run;
+package test;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 import tcc.Handler;
 
-public class RunHandler {
+public class TestHandler {
 	
 	public static void main(String[] args) throws IOException, SQLException, ParseException, ClassNotFoundException {
 		

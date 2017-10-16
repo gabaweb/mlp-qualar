@@ -57,20 +57,22 @@ public class MLP {
 		return dataSet;
 	}
 
-	public TemporalMLDataSet createTrainingDataSet() throws SQLException {
+	public TemporalMLDataSet createTrainingDataSet() throws SQLException, ClassNotFoundException {
 
 		TemporalMLDataSet trainingData = initializeDataSet();
+		
+		Class.forName("org.sqlite.JDBC");
 
 		Connection connection = DriverManager.getConnection("jdbc:sqlite:database.db");
 		connection.setAutoCommit(false);
 		Statement stmt = connection.createStatement();
-		ResultSet rs = stmt.executeQuery("select datetime(horario, '-1 year') lastdatetime from ENTRADAS_TRATADAS_DIARIO WHERE ID_ESTACAO = " + station + " order by horario desc LIMIT 1;");
+		ResultSet rs = stmt.executeQuery("select datetime(horario, '-1 year') lastdatetime from ENTRADAS_TRATADAS_24 WHERE ID_ESTACAO = " + station + " order by horario desc LIMIT 1;");
 		String lastdatetime = rs.getString("lastdatetime");
 		rs.close();
 		stmt.close();
 
 		stmt = connection.createStatement();
-		rs = stmt.executeQuery("SELECT VALOR FROM ENTRADAS_TRATADAS_DIARIO where horario < '" + lastdatetime + "' AND ID_ESTACAO = " + station + " order by horario desc");
+		rs = stmt.executeQuery("SELECT VALOR FROM ENTRADAS_TRATADAS_24 where horario < '" + lastdatetime + "' AND ID_ESTACAO = " + station + " order by horario desc");
 		
 		for (int x = 0; rs.next(); x++) {
 
@@ -91,24 +93,27 @@ public class MLP {
 		
 		rs.close();
 		stmt.close();
+		connection.close();
 
 		return trainingData;
 	}
 
-	public TemporalMLDataSet createValidadingDataSet() throws SQLException {
+	public TemporalMLDataSet createValidadingDataSet() throws SQLException, ClassNotFoundException {
 
 		TemporalMLDataSet trainingData = initializeDataSet();
+		
+		Class.forName("org.sqlite.JDBC");
 
 		Connection connection = DriverManager.getConnection("jdbc:sqlite:database.db");
 		connection.setAutoCommit(false);
 		Statement stmt = connection.createStatement();
-		ResultSet rs = stmt.executeQuery("select datetime(horario, '-1 year') lastdatetime from ENTRADAS_TRATADAS_DIARIO WHERE ID_ESTACAO = " + station + " order by horario desc LIMIT 1;");
+		ResultSet rs = stmt.executeQuery("select datetime(horario, '-1 year') lastdatetime from ENTRADAS_TRATADAS_24 WHERE ID_ESTACAO = " + station + " order by horario desc LIMIT 1;");
 		String lastdatetime = rs.getString("lastdatetime");
 		rs.close();
 		stmt.close();
 
 		stmt = connection.createStatement();
-		rs = stmt.executeQuery("SELECT VALOR FROM ENTRADAS_TRATADAS_DIARIO where horario > '" + lastdatetime + "' AND ID_ESTACAO = " + station + " order by horario desc");
+		rs = stmt.executeQuery("SELECT VALOR FROM ENTRADAS_TRATADAS_24 where horario > '" + lastdatetime + "' AND ID_ESTACAO = " + station + " order by horario desc");
 
 		for (int x = 0; rs.next(); x++) {
 
@@ -127,6 +132,7 @@ public class MLP {
 
 		rs.close();
 		stmt.close();
+		connection.close();
 
 		trainingData.generate();
 
@@ -158,16 +164,16 @@ public class MLP {
 		return (MLRegression) train.getMethod();
 	}
 
-	public double predict(MLRegression model) throws IOException, SQLException {
+	public double predict(MLRegression model) throws IOException, SQLException, ClassNotFoundException {
 
 		TemporalMLDataSet dataSet = initializeDataSet();
+		
+		Class.forName("org.sqlite.JDBC");
 
 		Connection connection = DriverManager.getConnection("jdbc:sqlite:database.db");
 		connection.setAutoCommit(false);
 		Statement stmt = connection.createStatement();
-		ResultSet rs = stmt.executeQuery("SELECT * FROM ENTRADAS_TRATADAS_DIARIO WHERE ID_ESTACAO = " + station + " order by horario desc");
-		rs.close();
-		stmt.close();
+		ResultSet rs = stmt.executeQuery("SELECT * FROM ENTRADAS_TRATADAS_24 WHERE ID_ESTACAO = " + station + " order by horario desc");
 		
 		int sequenceNumber;
 		double prediction = -1;
@@ -196,11 +202,15 @@ public class MLP {
 			}
 
 		}
+		
+		rs.close();
+		stmt.close();
+		connection.close();
 
 		return prediction;
 	}
 
-	public double execute() throws IOException, SQLException {
+	public double execute() throws IOException, SQLException, ClassNotFoundException {
 
 		TemporalMLDataSet trainingData = createTrainingDataSet();
 		TemporalMLDataSet validadingData = createValidadingDataSet();

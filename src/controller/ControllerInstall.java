@@ -1,6 +1,7 @@
-package servlets;
+package controller;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.SQLException;
 
 import javax.servlet.ServletException;
@@ -12,10 +13,10 @@ import javax.servlet.http.HttpServletResponse;
 import tcc.Database;
 
 @WebServlet("/install")
-public class Install extends HttpServlet {
+public class ControllerInstall extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
-    public Install() {
+    public ControllerInstall() {
         super();
     }
 
@@ -30,6 +31,13 @@ public class Install extends HttpServlet {
 		} catch (ClassNotFoundException | SQLException e) {
 			throw new ServletException(e);
 		}
+		
+        response.setContentType("text/html");
+        PrintWriter out = response.getWriter();
+		
+		out.print("Instalado!");
+		out.print("<br><br>");
+		out.print("<a href='./'>Voltar</a>");
 		
 	}
 

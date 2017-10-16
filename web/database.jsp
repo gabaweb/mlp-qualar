@@ -17,7 +17,7 @@
 		Class.forName("org.sqlite.JDBC");
 		Connection connection = DriverManager.getConnection("jdbc:sqlite:/sample.db");
 		Statement stmt = connection.createStatement();
-		ResultSet rs = stmt.executeQuery("SELECT * FROM ENTRADAS_TRATADAS");
+		ResultSet rs = stmt.executeQuery("SELECT * FROM ENTRADAS_TRATADAS_DIARIAS WHERE ID_ESTACAO = 113 order by horario desc LIMIT 1");
 
 		while (rs.next()) {
 	%>

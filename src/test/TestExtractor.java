@@ -1,4 +1,4 @@
-package run;
+package test;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -16,7 +16,7 @@ import org.apache.http.client.ClientProtocolException;
 
 import tcc.Extractor;
 
-public class RunExtractor {
+public class TestExtractor {
 	
 	public static void main(String[] args) throws ClientProtocolException, IOException, SQLException {
 
