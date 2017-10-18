@@ -1,7 +1,6 @@
 package controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -58,13 +57,10 @@ public class ControllerExtractor extends HttpServlet {
 		} catch (SQLException | ClassNotFoundException e) {
 			throw new ServletException(e);
 		}
-		
-        response.setContentType("text/html");
-        PrintWriter out = response.getWriter();
         
-		out.print("Extraido!");
-		out.print("<br><br>");
-		out.print("<a href='./'>Voltar</a>");
+        request.setAttribute("message", "Extraido com sucesso.");
+		
+		getServletContext().getRequestDispatcher("/WEB-INF/extrair.jsp").forward(request, response);
 		
 	}
 	

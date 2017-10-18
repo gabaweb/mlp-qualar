@@ -18,6 +18,8 @@ public class TestMLP {
         int hiddenLayerNeurons = 22;
         int predictWindowSize = 1;
         int station = 113;
+    	String validatingTimeWindow = "-6 months";
+    	String trainingTimeWindow = "-6 months";
         
         ArrayList<NormalizedField> normalizations = new ArrayList<>();
         
@@ -26,7 +28,7 @@ public class TestMLP {
         //normalizations.add(new NormalizedField(NormalizationAction.Normalize, "UR", 100, 0, 1, 0));
         //normalizations.add(new NormalizedField(NormalizationAction.Normalize, "VV", 10, 0, 1, 0));
 
-        double prediction = new MLP(useOutputVariableToPredict, numOfVariables, inputWindowSize, hiddenLayerNeurons, predictWindowSize, normalizations, station).execute();
+        double prediction = new MLP(useOutputVariableToPredict, numOfVariables, inputWindowSize, hiddenLayerNeurons, predictWindowSize, normalizations, station, validatingTimeWindow, trainingTimeWindow).execute();
         
         System.out.println(prediction);
 	}

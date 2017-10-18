@@ -33,6 +33,9 @@ public class Database {
 		statement.executeUpdate("DROP VIEW IF EXISTS ENTRADAS_TRATADAS_DIARIO");
 		statement.executeUpdate("CREATE VIEW ENTRADAS_TRATADAS_DIARIO AS SELECT ID, ID_ESTACAO, ID_VARIAVEL, DATE(HORARIO) HORARIO, AVG(VALOR) VALOR FROM ENTRADAS_TRATADAS GROUP BY ID_ESTACAO, DATE(HORARIO)");
 
+		statement.executeUpdate("DROP VIEW IF EXISTS ENTRADAS_TRATADAS_24");
+		statement.executeUpdate("CREATE VIEW ENTRADAS_TRATADAS_24 AS SELECT ((((strftime('%s', HORARIO) - strftime('%s', ULTIMA))/-3600)%24 - ((strftime('%s', HORARIO) - strftime('%s', ULTIMA))/-3600))/-24) JANELA, id, id_estacao, id_variavel, horario, AVG(VALOR) VALOR FROM (Select id, id_estacao, id_variavel, horario, (select horario from ENTRADAS_TRATADAS order by horario desc LIMIT 1) ULTIMA, valor From ENTRADAS_TRATADAS order by horario desc) GROUP BY JANELA");
+
 		//statement.executeUpdate("INSERT INTO ENTRADAS (ID, ID_ESTACAO, ID_VARIAVEL, HORARIO, VALOR) VALUES (1, 113,1,'2014-09-11 00:00',138.0)");
 
 		statement.close();

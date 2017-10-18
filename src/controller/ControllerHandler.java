@@ -1,7 +1,6 @@
 package controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -34,18 +33,18 @@ public class ControllerHandler extends HttpServlet {
 			ArrayList<ArrayList<String>> data = handler.read("cleaned_" + file + ".csv");
 			handler.save(data, station);
 			handler.removeMissingData();
-
 		
 		} catch (SQLException | ClassNotFoundException | ParseException e) {
-			throw new ServletException(e);
+						
+			request.setAttribute("message", e);
+			
+			getServletContext().getRequestDispatcher("/tratar.jsp").forward(request, response);
+			
 		}
 		
-        response.setContentType("text/html");
-        PrintWriter out = response.getWriter();
+        request.setAttribute("message", "Tratado com sucesso.");
 		
-		out.print("Tratado!");
-		out.print("<br><br>");
-		out.print("<a href='./'>Voltar</a>");
+		getServletContext().getRequestDispatcher("/WEB-INF/tratar.jsp").forward(request, response);
 		
 	}
 	

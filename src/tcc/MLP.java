@@ -31,8 +31,11 @@ public class MLP {
 	private boolean useOutputVariableToPredict;
 	private ArrayList<NormalizedField> normalizations;
 	private int station;
+	private String trainingTimeWindow;
+	private String validatingTimeWindow;
 
-	public MLP(boolean useOutputVariableToPredict, int numOfVariables, int inputWindowSize, int hiddenLayerNeurons, int predictWindowSize, ArrayList<NormalizedField> normalizations, int station) {
+
+	public MLP(boolean useOutputVariableToPredict, int numOfVariables, int inputWindowSize, int hiddenLayerNeurons, int predictWindowSize, ArrayList<NormalizedField> normalizations, int station, String trainingTimeWindow, String validatingTimeWindow) {
 
 		this.inputWindowSize = inputWindowSize;
 		this.hiddenLayerNeurons = hiddenLayerNeurons;
@@ -41,6 +44,8 @@ public class MLP {
 		this.useOutputVariableToPredict = useOutputVariableToPredict;
 		this.normalizations = normalizations;
 		this.station = station;
+		this.trainingTimeWindow = trainingTimeWindow;
+		this.validatingTimeWindow = validatingTimeWindow;
 
 	}
 
@@ -66,13 +71,13 @@ public class MLP {
 		Connection connection = DriverManager.getConnection("jdbc:sqlite:database.db");
 		connection.setAutoCommit(false);
 		Statement stmt = connection.createStatement();
-		ResultSet rs = stmt.executeQuery("select datetime(horario, '-1 year') lastdatetime from ENTRADAS_TRATADAS_24 WHERE ID_ESTACAO = " + station + " order by horario desc LIMIT 1;");
-		String lastdatetime = rs.getString("lastdatetime");
+		ResultSet rs = stmt.executeQuery("select date(horario, '" + validatingTimeWindow + "') date from ENTRADAS_TRATADAS_24 WHERE ID_ESTACAO = " + station + " order by horario desc LIMIT 1;");
+		String date = rs.getString("date");
 		rs.close();
 		stmt.close();
 
 		stmt = connection.createStatement();
-		rs = stmt.executeQuery("SELECT VALOR FROM ENTRADAS_TRATADAS_24 where horario < '" + lastdatetime + "' AND ID_ESTACAO = " + station + " order by horario desc");
+		rs = stmt.executeQuery("SELECT VALOR FROM ENTRADAS_TRATADAS_24 where horario < '" + date + "' AND HORARIO > date('" + date + "', '" + trainingTimeWindow + "') AND ID_ESTACAO = " + station + " order by horario desc");
 		
 		for (int x = 0; rs.next(); x++) {
 
@@ -107,13 +112,13 @@ public class MLP {
 		Connection connection = DriverManager.getConnection("jdbc:sqlite:database.db");
 		connection.setAutoCommit(false);
 		Statement stmt = connection.createStatement();
-		ResultSet rs = stmt.executeQuery("select datetime(horario, '-1 year') lastdatetime from ENTRADAS_TRATADAS_24 WHERE ID_ESTACAO = " + station + " order by horario desc LIMIT 1;");
-		String lastdatetime = rs.getString("lastdatetime");
+		ResultSet rs = stmt.executeQuery("select date(horario, '" + validatingTimeWindow + "') date from ENTRADAS_TRATADAS_24 WHERE ID_ESTACAO = " + station + " order by horario desc LIMIT 1;");
+		String date = rs.getString("date");
 		rs.close();
 		stmt.close();
 
 		stmt = connection.createStatement();
-		rs = stmt.executeQuery("SELECT VALOR FROM ENTRADAS_TRATADAS_24 where horario > '" + lastdatetime + "' AND ID_ESTACAO = " + station + " order by horario desc");
+		rs = stmt.executeQuery("SELECT VALOR FROM ENTRADAS_TRATADAS_24 where horario > '" + date + "' AND ID_ESTACAO = " + station + " order by horario desc");
 
 		for (int x = 0; rs.next(); x++) {
 
@@ -215,7 +220,7 @@ public class MLP {
 		TemporalMLDataSet trainingData = createTrainingDataSet();
 		TemporalMLDataSet validadingData = createValidadingDataSet();
 
-		MLRegression model = trainModel(trainingData, validadingData, MLMethodFactory.TYPE_FEEDFORWARD, "?:B->SIGMOID->" + hiddenLayerNeurons + ":B->SIGMOID->?", MLTrainFactory.TYPE_RPROP, "");
+		MLRegression model = trainModel(trainingData, validadingData, MLMethodFactory.TYPE_FEEDFORWARD, "?:B->SIGMOID->" + hiddenLayerNeurons + ":B->SIGMOID->?" , MLTrainFactory.TYPE_RPROP, "");
 
 		double prediction = predict(model);
 
