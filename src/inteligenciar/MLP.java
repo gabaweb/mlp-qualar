@@ -1,5 +1,6 @@
-package tcc;
+package inteligenciar;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -21,6 +22,8 @@ import org.encog.ml.factory.MLTrainFactory;
 import org.encog.ml.train.MLTrain;
 import org.encog.ml.train.strategy.end.SimpleEarlyStoppingStrategy;
 import org.encog.util.arrayutil.NormalizedField;
+import org.encog.util.obj.SerializeObject;
+import org.encog.neural.networks.BasicNetwork;
 
 public class MLP {
 
@@ -144,7 +147,7 @@ public class MLP {
 		return trainingData;
 	}
 
-	public MLRegression trainModel(MLDataSet trainingData, MLDataSet validadingData, String methodName, String methodArchitecture, String trainerName, String trainerArgs) {
+	public MLRegression trainAndSaveModel(MLDataSet trainingData, MLDataSet validadingData, String methodName, String methodArchitecture, String trainerName, String trainerArgs) throws IOException, ClassNotFoundException {
 
 		MLMethodFactory methodFactory = new MLMethodFactory();
 		MLMethod method = methodFactory.create(methodName, methodArchitecture, trainingData.getInputSize(), trainingData.getIdealSize());
@@ -165,8 +168,19 @@ public class MLP {
 		}
 
 		train.finishTraining();
-
+				
+		BasicNetwork network = (BasicNetwork) train.getMethod();
+		SerializeObject.save(new File("network"), network);
+				
 		return (MLRegression) train.getMethod();
+	}
+	
+	public MLRegression loadModel() throws ClassNotFoundException, IOException {
+		
+		BasicNetwork network = (BasicNetwork) SerializeObject.load(new File("network"));
+
+		return (MLRegression) network;
+		
 	}
 
 	public double predict(MLRegression model) throws IOException, SQLException, ClassNotFoundException {
@@ -214,19 +228,5 @@ public class MLP {
 
 		return prediction;
 	}
-
-	public double execute() throws IOException, SQLException, ClassNotFoundException {
-
-		TemporalMLDataSet trainingData = createTrainingDataSet();
-		TemporalMLDataSet validadingData = createValidadingDataSet();
-
-		MLRegression model = trainModel(trainingData, validadingData, MLMethodFactory.TYPE_FEEDFORWARD, "?:B->SIGMOID->" + hiddenLayerNeurons + ":B->SIGMOID->?" , MLTrainFactory.TYPE_RPROP, "");
-
-		double prediction = predict(model);
-
-		Encog.getInstance().shutdown();
-
-		return prediction;
-
-	}
+	
 }

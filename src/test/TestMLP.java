@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import org.encog.util.arrayutil.NormalizationAction;
 import org.encog.util.arrayutil.NormalizedField;
 
-import tcc.MLP;
+import inteligenciar.MLP;
 
 public class TestMLP {
 
@@ -28,9 +28,9 @@ public class TestMLP {
         //normalizations.add(new NormalizedField(NormalizationAction.Normalize, "UR", 100, 0, 1, 0));
         //normalizations.add(new NormalizedField(NormalizationAction.Normalize, "VV", 10, 0, 1, 0));
 
-        double prediction = new MLP(useOutputVariableToPredict, numOfVariables, inputWindowSize, hiddenLayerNeurons, predictWindowSize, normalizations, station, validatingTimeWindow, trainingTimeWindow).execute();
+        //double prediction = new MLP(useOutputVariableToPredict, numOfVariables, inputWindowSize, hiddenLayerNeurons, predictWindowSize, normalizations, station, validatingTimeWindow, trainingTimeWindow).execute();
         
-        System.out.println(prediction);
+        //System.out.println(prediction);
 	}
 
 }

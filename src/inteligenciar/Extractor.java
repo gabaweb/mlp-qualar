@@ -1,4 +1,4 @@
-package tcc;
+package inteligenciar;
 
 import java.io.File;
 import java.io.FileNotFoundException;

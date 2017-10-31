@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import tcc.Handler;
+import inteligenciar.Handler;
 
 @WebServlet("/tratar")
 public class ControllerHandler extends HttpServlet {
