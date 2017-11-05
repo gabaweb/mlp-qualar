@@ -14,7 +14,7 @@ import java.util.Date;
 
 import org.apache.http.client.ClientProtocolException;
 
-import inteligenciar.Extractor;
+import model.Extractor;
 
 public class TestExtractor {
 	

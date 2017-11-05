@@ -1,4 +1,4 @@
-package inteligenciar;
+package controller;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -13,7 +13,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Job implements Runnable {
+import model.Extractor;
+import model.Handler;
+
+public class ControllerListener implements Runnable {
 
 	@Override
 	public void run() {

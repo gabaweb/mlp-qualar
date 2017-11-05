@@ -1,4 +1,4 @@
-package inteligenciar;
+package model;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -6,6 +6,8 @@ import java.util.concurrent.TimeUnit;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
+
+import controller.ControllerListener;
 
 @WebListener
 public class Listener implements ServletContextListener {
@@ -15,7 +17,8 @@ public class Listener implements ServletContextListener {
 	@Override
 	public void contextInitialized(ServletContextEvent event) {
 		scheduler = Executors.newSingleThreadScheduledExecutor();
-		scheduler.scheduleAtFixedRate(new Job(), 0, 1, TimeUnit.HOURS);
+		scheduler.scheduleAtFixedRate(new ControllerListener(), 0, 1, TimeUnit.HOURS);
+
 	}
 
 	@Override

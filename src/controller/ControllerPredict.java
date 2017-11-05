@@ -24,7 +24,7 @@ import org.encog.ml.factory.MLTrainFactory;
 import org.encog.util.arrayutil.NormalizationAction;
 import org.encog.util.arrayutil.NormalizedField;
 
-import inteligenciar.MLP;
+import model.MLP;
 
 @WebServlet("")
 public class ControllerPredict extends HttpServlet {

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import org.encog.util.arrayutil.NormalizationAction;
 import org.encog.util.arrayutil.NormalizedField;
 
-import inteligenciar.MLP;
+import model.MLP;
 
 public class TestMLP {
 

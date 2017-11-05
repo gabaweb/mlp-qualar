@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
 
-import inteligenciar.Handler;
+import model.Handler;
 
 public class TestHandler {
 	

@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import inteligenciar.Database;
+import model.Install;
 
 @WebServlet("/install")
 public class ControllerInstall extends HttpServlet {
@@ -23,11 +23,13 @@ public class ControllerInstall extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		try {
+			
 			Class.forName("org.sqlite.JDBC");
 
-			Database database = new Database();
+			Install install = new Install();
 			
-			database.create();
+			install.createDatabase();
+			
 		} catch (ClassNotFoundException | SQLException e) {
 			throw new ServletException(e);
 		}
