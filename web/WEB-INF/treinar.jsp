@@ -1,36 +1,36 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
-<% String name = "Treinar"; %>
+<% String name = "Treinamento da rede neural"; %>
 <%@ include file="header.jsp"%>
 			<h1><%=name%></h1>
 			<%
 				if (request.getAttribute("message") != null) {
 			%>
-			<div class="alert alert-primary" role="alert"><%=request.getAttribute("message")%></div>
+			<div class="alert alert-secondary" role="alert"><%=request.getAttribute("message")%></div>
 			<%
 				}
 			%>
 			<form action="./treinar" method="post">
 				<div class="form-group">
-					<label for="validatingTimeWindow">Janela Validação</label>
+					<label for="validatingTimeWindow">Janela de Validação (em meses)</label>
 					<input
 						type="text" class="form-control" id="validatingTimeWindow"
-						name="validatingTimeWindow" value="-6 months">
+						name="validatingTimeWindow" value="6">
 				</div>
 				<div class="form-group">
-					<label for="trainingTimeWindow">Janela Treinamento</label>
+					<label for="trainingTimeWindow">Janela de Treinamento (em meses)</label>
 					<input
 						type="text" class="form-control" id="trainingTimeWindow"
-						name="trainingTimeWindow" value="-6 months">
+						name="trainingTimeWindow" value="6">
 				</div>
 				<div class="form-group">
-					<label for="trainingTimeWindow">Janela de Entrada</label>
+					<label for="trainingTimeWindow">Quantidade de Dados de Entrada</label>
 					<input
 						type="text" class="form-control" id="inputWindowSize"
 						name="inputWindowSize" value="4">
 				</div>
 				<div class="form-group">
-					<label for="trainingTimeWindow">Número de Neurônios na Camada Oculta</label>
+					<label for="trainingTimeWindow">Quantidade de Neurônios na Camada Oculta</label>
 					<input type="text" class="form-control"
 						id="hiddenLayerNeurons" name="hiddenLayerNeurons" value="22">
 				</div>

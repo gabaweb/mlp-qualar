@@ -31,15 +31,13 @@
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle active" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Painel de Controle</a>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdown01">
-              <a class="dropdown-item<%if(name.equals("Prever")){%> active<%}%>" href="./">Prever</a>
-              <a class="dropdown-item<%if(name.equals("Treinar")){%> active<%}%>" href="./treinar">Treinar</a>
-              <a class="dropdown-item<%if(name.equals("Extrair")){%> active<%}%>" href="./extrair">Extrair</a>
-              <a class="dropdown-item<%if(name.equals("Tratar")){%> active<%}%>" href="./tratar">Tratar</a>
-              <a class="dropdown-item<%if(name.equals("Entradas")){%> active<%}%>" href="./entradas">Entradas</a>
+              <a class="dropdown-item<%if(name.equals("Previsão em tempo real")){%> active<%}%>" href="./">Previsão em tempo real</a>
+              <a class="dropdown-item<%if(name.equals("Treinamento da rede neural")){%> active<%}%>" href="./treinar">Treinamento da rede neural</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item<%if(name.equals("Extrair")){%> active<%}%>" href="./extrair">Testes: Extrair dados</a>
+              <a class="dropdown-item<%if(name.equals("Tratar")){%> active<%}%>" href="./tratar">Testes: Tratar dados</a>
+              <a class="dropdown-item<%if(name.equals("Entradas")){%> active<%}%>" href="./entradas">Testes: Dados de Entrada</a>
             </div>
-            <li class="nav-item">
-            	<a class="nav-link" href="./">Configurações</a>
-          	</li>
           </li>
         </ul>
       </div>
@@ -50,19 +48,10 @@
         <nav class="col-sm-3 col-md-2 d-none d-sm-block bg-light sidebar">
           <ul class="nav nav-pills flex-column">
             <li class="nav-item">
-              <a class="nav-link<%if(name.equals("Prever")){%> active<%}%>" href="./">Prever</a>
+              <a class="nav-link<%if(name.equals("Previsão em tempo real")){%> active<%}%>" href="./">Previsão em tempo real</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link<%if(name.equals("Treinar")){%> active<%}%>" href="./treinar">Treinar</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link<%if(name.equals("Extrair")){%> active<%}%>" href="./extrair">Extrair</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link<%if(name.equals("Tratar")){%> active<%}%>" href="./tratar">Tratar</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link<%if(name.equals("Entradas")){%> active<%}%>" href="./entradas">Entradas</a>
+              <a class="nav-link<%if(name.equals("Treinamento da rede neural")){%> active<%}%>" href="./treinar">Treinamento da rede neural</a>
             </li>
           </ul>
         </nav>

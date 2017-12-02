@@ -14,8 +14,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.encog.Encog;
-import org.encog.ml.MLRegression;
 import org.encog.ml.data.temporal.TemporalMLDataSet;
 import org.encog.ml.factory.MLMethodFactory;
 import org.encog.ml.factory.MLTrainFactory;
@@ -47,8 +45,8 @@ public class ControllerTrain extends HttpServlet {
 	        int inputWindowSize = Integer.parseInt(request.getParameter("inputWindowSize"));
 	        int hiddenLayerNeurons = Integer.parseInt(request.getParameter("hiddenLayerNeurons"));
 	        int predictWindowSize = 1;
-	    	String validatingTimeWindow = request.getParameter("validatingTimeWindow");
-	    	String trainingTimeWindow = request.getParameter("trainingTimeWindow");
+	    	String validatingTimeWindow = "-" + request.getParameter("validatingTimeWindow") + " months";
+	    	String trainingTimeWindow = "-" + request.getParameter("trainingTimeWindow") + " months";
 			
 	    	Class.forName("org.sqlite.JDBC");
 			Connection connection = DriverManager.getConnection("jdbc:sqlite:database.db");
@@ -83,11 +81,12 @@ public class ControllerTrain extends HttpServlet {
 	        TemporalMLDataSet trainingData = mlp.createTrainingDataSet();
 			TemporalMLDataSet validadingData = mlp.createValidadingDataSet();
 
-			MLRegression model = mlp.trainAndSaveModel(trainingData, validadingData, MLMethodFactory.TYPE_FEEDFORWARD, "?:B->SIGMOID->" + hiddenLayerNeurons + ":B->SIGMOID->?" , MLTrainFactory.TYPE_RPROP, "");
+			mlp.trainAndSaveModel(trainingData, validadingData, MLMethodFactory.TYPE_FEEDFORWARD, "?:B->SIGMOID->" + hiddenLayerNeurons + ":B->SIGMOID->?" , MLTrainFactory.TYPE_RPROP, "");
 			
 			request.setAttribute("message", "Treinado com sucesso.");
 			
 			getServletContext().getRequestDispatcher("/WEB-INF/treinar.jsp").forward(request, response);
+			
 		
 		} catch (SQLException | ClassNotFoundException e) {
 			throw new ServletException(e);

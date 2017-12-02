@@ -28,7 +28,6 @@ import org.encog.neural.networks.BasicNetwork;
 public class MLP {
 
 	private int inputWindowSize;
-	private int hiddenLayerNeurons;
 	private int predictWindowSize;
 	private int numOfVariables;
 	private boolean useOutputVariableToPredict;
@@ -41,7 +40,6 @@ public class MLP {
 	public MLP(boolean useOutputVariableToPredict, int numOfVariables, int inputWindowSize, int hiddenLayerNeurons, int predictWindowSize, ArrayList<NormalizedField> normalizations, int station, String trainingTimeWindow, String validatingTimeWindow) {
 
 		this.inputWindowSize = inputWindowSize;
-		this.hiddenLayerNeurons = hiddenLayerNeurons;
 		this.predictWindowSize = predictWindowSize;
 		this.numOfVariables = numOfVariables;
 		this.useOutputVariableToPredict = useOutputVariableToPredict;

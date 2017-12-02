@@ -71,7 +71,7 @@ public class ControllerPredict extends HttpServlet {
 	        
 			MLRegression model = mlp.loadModel();
 			
-			double prediction = mlp.predict(model);
+			Double prediction = mlp.predict(model);
 			
 			Encog.getInstance().shutdown();
 	        
