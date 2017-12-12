@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class Install {
+public class ModelInstall {
 
 	public void createDatabase() throws ClassNotFoundException, SQLException {
 
@@ -45,7 +45,7 @@ public class Install {
 	
 	public static void main(String[] args) throws ClassNotFoundException, SQLException {
 		
-		Install install = new Install();
+		ModelInstall install = new ModelInstall();
 	
 		install.createDatabase();
 		

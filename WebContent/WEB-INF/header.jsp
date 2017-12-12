@@ -10,7 +10,7 @@
 <meta name="author" content="">
 <link rel="icon" href="./favicon.ico">
 
-<title>Inteligenciar: QUALAR</title>
+<title>MLP: QUALAR</title>
 
 <!-- Bootstrap core CSS -->
 <link href="./css/bootstrap.min.css" rel="stylesheet">
@@ -21,7 +21,7 @@
 
   <body>
     <nav class="navbar navbar-expand-sm navbar-dark fixed-top bg-dark">
-      <a class="navbar-brand" href="./">Inteligenciar: QUALAR</a>
+      <a class="navbar-brand" href="./">MLP: QUALAR</a>
       <button class="navbar-toggler d-lg-none" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>

@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import model.Handler;
+import model.ModelHandler;
 
 @WebServlet("/tratar")
 public class ControllerHandler extends HttpServlet {
@@ -28,7 +28,7 @@ public class ControllerHandler extends HttpServlet {
 			int station = 113;
 			String file = "113_Piracicaba_MP10";
 												
-			Handler handler = new Handler();
+			ModelHandler handler = new ModelHandler();
 			handler.clear(file + ".csv");
 			ArrayList<ArrayList<String>> data = handler.read("cleaned_" + file + ".csv");
 			handler.save(data, station);

@@ -14,7 +14,7 @@ import java.util.Date;
 
 import org.apache.http.client.ClientProtocolException;
 
-import model.Extractor;
+import model.ModelExtractor;
 
 public class TestExtractor {
 	
@@ -23,7 +23,7 @@ public class TestExtractor {
 		int station = 113;
 		String file = "113_Piracicaba_MP10";
 
-		Extractor extractor = new Extractor();
+		ModelExtractor extractor = new ModelExtractor();
 		extractor.login();
 
 		Connection connection = DriverManager.getConnection("jdbc:sqlite:database.db");

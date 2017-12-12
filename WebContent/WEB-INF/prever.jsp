@@ -111,27 +111,27 @@ rs = stmt.executeQuery("SELECT HORARIO FROM ENTRADAS_TRATADAS WHERE ID_ESTACAO =
 
 					if (previsao <= 50) {
 				%>
-				<div class="alert alert-success" role="alert">Qualidade prevista: Boa</div>
+				<div class="alert alert-1" role="alert">Qualidade prevista: Boa</div>
 				<%
 					}
 					else if (previsao > 50 && previsao <= 150) {
 				%>
-				<div class="alert alert-warning" role="alert">Qualidade prevista: Regular</div>
+				<div class="alert alert-2" role="alert">Qualidade prevista: Regular</div>
 				<%
 					}
 					else if (previsao > 150 && previsao <= 250) {
 				%>
-				<div class="alert alert-warning" role="alert">Qualidade prevista: Inadequada</div>
+				<div class="alert alert-3" role="alert">Qualidade prevista: Inadequada</div>
 				<%
 					}
 					else if (previsao > 250 && previsao <= 420) {
 				%>
-				<div class="alert alert-warning" role="alert">Qualidade prevista: Má</div>
+				<div class="alert alert-4" role="alert">Qualidade prevista: Má</div>
 				<%
 					}
 					else if (previsao > 420) {
 				%>
-				<div class="alert alert-danger" role="alert">Qualidade prevista: Péssima</div>
+				<div class="alert alert-5" role="alert">Qualidade prevista: Péssima</div>
 				<%
 					}
 			%>

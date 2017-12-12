@@ -17,11 +17,11 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 
-public class Extractor {
+public class ModelExtractor {
 
 	private HttpClient client;
 
-	public Extractor() {
+	public ModelExtractor() {
 
 		client = HttpClientBuilder.create().build();
 

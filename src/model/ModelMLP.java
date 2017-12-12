@@ -25,7 +25,7 @@ import org.encog.util.arrayutil.NormalizedField;
 import org.encog.util.obj.SerializeObject;
 import org.encog.neural.networks.BasicNetwork;
 
-public class MLP {
+public class ModelMLP {
 
 	private int inputWindowSize;
 	private int predictWindowSize;
@@ -37,7 +37,7 @@ public class MLP {
 	private String validatingTimeWindow;
 
 
-	public MLP(boolean useOutputVariableToPredict, int numOfVariables, int inputWindowSize, int hiddenLayerNeurons, int predictWindowSize, ArrayList<NormalizedField> normalizations, int station, String trainingTimeWindow, String validatingTimeWindow) {
+	public ModelMLP(boolean useOutputVariableToPredict, int numOfVariables, int inputWindowSize, int hiddenLayerNeurons, int predictWindowSize, ArrayList<NormalizedField> normalizations, int station, String trainingTimeWindow, String validatingTimeWindow) {
 
 		this.inputWindowSize = inputWindowSize;
 		this.predictWindowSize = predictWindowSize;

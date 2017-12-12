@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
 
-import model.Handler;
+import model.ModelHandler;
 
 public class TestHandler {
 	
@@ -14,7 +14,7 @@ public class TestHandler {
 		int station = 113;
 		String file = "113_Piracicaba_MP10";
 		
-		Handler handler = new Handler();
+		ModelHandler handler = new ModelHandler();
 		handler.clear(file + ".csv");
 		ArrayList<ArrayList<String>> data = handler.read("cleaned_" + file + ".csv");
 		handler.save(data, station);

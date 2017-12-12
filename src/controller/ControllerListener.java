@@ -13,8 +13,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 
-import model.Extractor;
-import model.Handler;
+import model.ModelExtractor;
+import model.ModelHandler;
 
 public class ControllerListener implements Runnable {
 
@@ -24,7 +24,7 @@ public class ControllerListener implements Runnable {
 		int station = 113;
 		String file = "113_Piracicaba_MP10";
 
-		Extractor extractor = new Extractor();
+		ModelExtractor extractor = new ModelExtractor();
 		try {
 			extractor.login();
 		
@@ -45,7 +45,7 @@ public class ControllerListener implements Runnable {
 					
 		extractor.saveFile(extractor.extract(station, "12", lastdate, dateFormat.format(date)), file + ".csv");
 											
-		Handler handler = new Handler();
+		ModelHandler handler = new ModelHandler();
 		handler.clear(file + ".csv");
 		ArrayList<ArrayList<String>> data = handler.read("cleaned_" + file + ".csv");
 		handler.save(data, station);

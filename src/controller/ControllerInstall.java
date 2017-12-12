@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import model.Install;
+import model.ModelInstall;
 
 @WebServlet("/install")
 public class ControllerInstall extends HttpServlet {
@@ -26,7 +26,7 @@ public class ControllerInstall extends HttpServlet {
 			
 			Class.forName("org.sqlite.JDBC");
 
-			Install install = new Install();
+			ModelInstall install = new ModelInstall();
 			
 			install.createDatabase();
 			

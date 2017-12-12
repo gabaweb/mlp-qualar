@@ -24,7 +24,7 @@ import org.encog.ml.factory.MLTrainFactory;
 import org.encog.util.arrayutil.NormalizationAction;
 import org.encog.util.arrayutil.NormalizedField;
 
-import model.MLP;
+import model.ModelMLP;
 
 @WebServlet("")
 public class ControllerPredict extends HttpServlet {
@@ -67,7 +67,7 @@ public class ControllerPredict extends HttpServlet {
 	        //normalizations.add(new NormalizedField(NormalizationAction.Normalize, "UR", 100, 0, 1, 0));
 	        //normalizations.add(new NormalizedField(NormalizationAction.Normalize, "VV", 10, 0, 1, 0));
 
-	        MLP mlp = new MLP(useOutputVariableToPredict, numOfVariables, inputWindowSize, hiddenLayerNeurons, predictWindowSize, normalizations, station, validatingTimeWindow, trainingTimeWindow);
+	        ModelMLP mlp = new ModelMLP(useOutputVariableToPredict, numOfVariables, inputWindowSize, hiddenLayerNeurons, predictWindowSize, normalizations, station, validatingTimeWindow, trainingTimeWindow);
 	        
 			MLRegression model = mlp.loadModel();
 			

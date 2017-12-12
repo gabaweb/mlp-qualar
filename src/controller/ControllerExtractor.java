@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import model.Extractor;
+import model.ModelExtractor;
 
 @WebServlet("/extrair")
 public class ControllerExtractor extends HttpServlet {
@@ -34,7 +34,7 @@ public class ControllerExtractor extends HttpServlet {
 			int station = 113;
 			String file = "113_Piracicaba_MP10";
 
-			Extractor extractor = new Extractor();
+			ModelExtractor extractor = new ModelExtractor();
 			extractor.login();
 			
 			Class.forName("org.sqlite.JDBC");

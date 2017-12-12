@@ -82,3 +82,33 @@ h3 {
   padding-top: 1.5rem;
   padding-bottom: 1.5rem;
 }
+
+.alert-1 {
+    color: #000000;
+    background-color: #00CC00;
+    border-color: #00CC00;
+}
+
+.alert-2 {
+    color: #000000;
+    background-color: #FFFF00;
+    border-color: #FFFF00;
+}
+
+.alert-3 {
+    color: #000000;
+    background-color: #FFAA71;
+    border-color: #FFAA71;
+}
+
+.alert-4 {
+    color: #000000;
+    background-color: #FF0F03;
+    border-color: #FF0F03;
+}
+
+.alert-5 {
+    color: #000000;
+    background-color: #990066;
+    border-color: #990066;
+}

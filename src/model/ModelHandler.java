@@ -20,7 +20,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class Handler {
+public class ModelHandler {
 
 	public void clear(String filePath) throws IOException {
 
