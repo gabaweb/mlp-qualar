@@ -32,17 +32,22 @@ public class ControllerExtractor extends HttpServlet {
 		try {
 			
 			int station = 113;
-			String file = "113_Piracicaba_MP10";
+			String file = System.getenv("APP_MLP_QUALAR_HOME")+"113_Piracicaba_MP10";
 
 			ModelExtractor extractor = new ModelExtractor();
 			extractor.login();
 			
 			Class.forName("org.sqlite.JDBC");
 
-			Connection connection = DriverManager.getConnection("jdbc:sqlite:database.db");
+			Connection connection = DriverManager.getConnection("jdbc:sqlite:"+System.getenv("APP_MLP_QUALAR_HOME")+"database.db");
 			connection.setAutoCommit(false);
 			ResultSet rs = connection.createStatement().executeQuery("SELECT DATE(HORARIO) HORARIO FROM ENTRADAS WHERE ID_ESTACAO = " + station + " ORDER BY HORARIO DESC LIMIT 1;");
-			String lastdate = rs.getString("HORARIO");
+			String lastdate;
+			if (rs.isClosed()) {
+				lastdate = "2018-12-04";
+			}else {
+				lastdate = rs.getString("HORARIO");
+			}
 			rs.close();
 			connection.close();
 			

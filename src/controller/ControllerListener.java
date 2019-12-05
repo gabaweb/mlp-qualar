@@ -30,7 +30,7 @@ public class ControllerListener implements Runnable {
 		
 		Class.forName("org.sqlite.JDBC");
 
-		Connection connection = DriverManager.getConnection("jdbc:sqlite:database.db");
+		Connection connection = DriverManager.getConnection("jdbc:sqlite:"+System.getenv("APP_MLP_QUALAR_HOME")+"database.db");
 		connection.setAutoCommit(false);
 		ResultSet rs = connection.createStatement().executeQuery("SELECT DATE(HORARIO) HORARIO FROM ENTRADAS WHERE ID_ESTACAO = " + station + " ORDER BY HORARIO DESC LIMIT 1;");
 		String lastdate = rs.getString("HORARIO");

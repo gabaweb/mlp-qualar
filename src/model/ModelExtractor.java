@@ -29,7 +29,7 @@ public class ModelExtractor {
 
 	public void login() throws ClientProtocolException, IOException {
 
-		HttpPost post = new HttpPost("http://qualar.cetesb.sp.gov.br/qualar/autenticador");
+		HttpPost post = new HttpPost("https://qualar.cetesb.sp.gov.br/qualar/autenticador");
 
 		List<NameValuePair> urlParameters = new ArrayList<>();
 		urlParameters.add(new BasicNameValuePair("cetesb_login", "gabriel.barros@hotmail.com"));
@@ -50,7 +50,7 @@ public class ModelExtractor {
 		urlParameters.add(new BasicNameValuePair("estacaoVO.nestcaMonto", station.toString()));
 		urlParameters.add(new BasicNameValuePair("nparmtsSelecionados", parameter));
 
-		HttpPost post = new HttpPost("http://qualar.cetesb.sp.gov.br/qualar/exportaDadosAvanc.do?method=exportar");
+		HttpPost post = new HttpPost("https://qualar.cetesb.sp.gov.br/qualar/exportaDadosAvanc.do?method=exportar");
 
 		post.setEntity(new UrlEncodedFormEntity(urlParameters));
 

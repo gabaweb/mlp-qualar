@@ -10,7 +10,7 @@
 <%@ page import="java.text.DecimalFormat"%>
 <%@ page import="java.text.DecimalFormatSymbols"%>
 <%@ page import="java.util.Locale"%>
-<% String name = "Previsão em tempo real"; %>
+<%! public String name = "Previsão em tempo real"; %>
 <%@ include file="header.jsp"%>
 <script>
 window.onload = function () {

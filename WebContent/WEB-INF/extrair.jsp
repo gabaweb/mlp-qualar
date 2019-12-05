@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
-<% 	String name = "Extrair"; %>
+<%! public String name = "Extrair"; %>
 <%@ include file="header.jsp"%>
 			<%
 				if (request.getAttribute("message") != null) {

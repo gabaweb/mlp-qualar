@@ -22,29 +22,35 @@ public class ControllerHandler extends HttpServlet {
     }
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		Boolean exception = false;
 
 		try {
 			
+			Class.forName("org.sqlite.JDBC");
+			
 			int station = 113;
-			String file = "113_Piracicaba_MP10";
+			String file = System.getenv("APP_MLP_QUALAR_HOME")+"113_Piracicaba_MP10";
 												
 			ModelHandler handler = new ModelHandler();
 			handler.clear(file + ".csv");
-			ArrayList<ArrayList<String>> data = handler.read("cleaned_" + file + ".csv");
+			ArrayList<ArrayList<String>> data = handler.read(System.getenv("APP_MLP_QUALAR_HOME")+"cleaned_113_Piracicaba_MP10.csv");
 			handler.save(data, station);
 			handler.removeMissingData();
 		
 		} catch (SQLException | ClassNotFoundException | ParseException e) {
+			exception = true;
+			System.out.println("message: " + e);
 						
-			request.setAttribute("message", e);
-			
-			getServletContext().getRequestDispatcher("/tratar.jsp").forward(request, response);
-			
 		}
 		
-        request.setAttribute("message", "Tratado com sucesso.");
+		if(!exception){
 		
-		getServletContext().getRequestDispatcher("/WEB-INF/tratar.jsp").forward(request, response);
+	        request.setAttribute("message", "Tratado com sucesso.");
+			
+			getServletContext().getRequestDispatcher("/WEB-INF/tratar.jsp").forward(request, response);
+		
+		}
 		
 	}
 	

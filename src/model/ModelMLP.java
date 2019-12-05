@@ -69,7 +69,7 @@ public class ModelMLP {
 		
 		Class.forName("org.sqlite.JDBC");
 
-		Connection connection = DriverManager.getConnection("jdbc:sqlite:database.db");
+		Connection connection = DriverManager.getConnection("jdbc:sqlite:"+System.getenv("APP_MLP_QUALAR_HOME")+"database.db");
 		connection.setAutoCommit(false);
 		Statement stmt = connection.createStatement();
 		ResultSet rs = stmt.executeQuery("select date(horario, '" + validatingTimeWindow + "') date from ENTRADAS_TRATADAS_24 WHERE ID_ESTACAO = " + station + " order by horario desc LIMIT 1;");
@@ -110,7 +110,7 @@ public class ModelMLP {
 		
 		Class.forName("org.sqlite.JDBC");
 
-		Connection connection = DriverManager.getConnection("jdbc:sqlite:database.db");
+		Connection connection = DriverManager.getConnection("jdbc:sqlite:"+System.getenv("APP_MLP_QUALAR_HOME")+"database.db");
 		connection.setAutoCommit(false);
 		Statement stmt = connection.createStatement();
 		ResultSet rs = stmt.executeQuery("select date(horario, '" + validatingTimeWindow + "') date from ENTRADAS_TRATADAS_24 WHERE ID_ESTACAO = " + station + " order by horario desc LIMIT 1;");
@@ -187,7 +187,7 @@ public class ModelMLP {
 		
 		Class.forName("org.sqlite.JDBC");
 
-		Connection connection = DriverManager.getConnection("jdbc:sqlite:database.db");
+		Connection connection = DriverManager.getConnection("jdbc:sqlite:"+System.getenv("APP_MLP_QUALAR_HOME")+"database.db");
 		connection.setAutoCommit(false);
 		Statement stmt = connection.createStatement();
 		ResultSet rs = stmt.executeQuery("SELECT * FROM ENTRADAS_TRATADAS_24 WHERE ID_ESTACAO = " + station + " order by horario desc");

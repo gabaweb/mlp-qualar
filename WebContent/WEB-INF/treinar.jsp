@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
-<% String name = "Treinamento da rede neural"; %>
+<%! public String name = "Treinamento da rede neural"; %>
 <%@ include file="header.jsp"%>
 			<h1><%=name%></h1>
 			<%

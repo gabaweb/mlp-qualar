@@ -49,7 +49,7 @@ public class ControllerTrain extends HttpServlet {
 	    	String trainingTimeWindow = "-" + request.getParameter("trainingTimeWindow") + " months";
 			
 	    	Class.forName("org.sqlite.JDBC");
-			Connection connection = DriverManager.getConnection("jdbc:sqlite:database.db");
+			Connection connection = DriverManager.getConnection("jdbc:sqlite:"+System.getenv("APP_MLP_QUALAR_HOME")+"database.db");
 			connection.setAutoCommit(false);
 			
 			Statement stmt = connection.createStatement();

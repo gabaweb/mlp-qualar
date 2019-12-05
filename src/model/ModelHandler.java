@@ -25,7 +25,7 @@ public class ModelHandler {
 	public void clear(String filePath) throws IOException {
 
 		File inputFile = new File(filePath);
-		File outputFile = new File("cleaned_" + filePath);
+		File outputFile = new File(System.getenv("APP_MLP_QUALAR_HOME")+"cleaned_113_Piracicaba_MP10.csv");
 
 		BufferedReader reader = new BufferedReader(new FileReader(inputFile));
 		BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile));
@@ -194,12 +194,17 @@ public class ModelHandler {
 
 	public void save(ArrayList<ArrayList<String>> data, int station) throws SQLException, ParseException {
 
-		Connection connection = DriverManager.getConnection("jdbc:sqlite:database.db");
+		Connection connection = DriverManager.getConnection("jdbc:sqlite:"+System.getenv("APP_MLP_QUALAR_HOME")+"database.db");
 		connection.setAutoCommit(false);
 
 		Statement stmt = connection.createStatement();
 		ResultSet rs = stmt.executeQuery("select horario from ENTRADAS WHERE ID_ESTACAO = " + station + " order by horario desc LIMIT 1;");
-		LocalDateTime lastDateTime = LocalDateTime.parse(rs.getString("horario"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+		LocalDateTime lastDateTime;
+		if (rs.isClosed()) {
+			lastDateTime = null;
+		}else {
+			lastDateTime = LocalDateTime.parse(rs.getString("horario"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+		}
 		rs.close();
 		stmt.close();
 
@@ -214,7 +219,7 @@ public class ModelHandler {
 
 			csvDateTime = LocalDateTime.parse(row.get(0) + " " + row.get(1), DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
 
-			if (csvDateTime.isAfter(lastDateTime)) {
+			if (lastDateTime == null || csvDateTime.isAfter(lastDateTime)) {
 
 				pstmt.setInt(1, station);
 				pstmt.setInt(2, 1);
@@ -249,7 +254,7 @@ public class ModelHandler {
 
 	public void removeMissingData() throws SQLException, ClassNotFoundException {
 
-		Connection connection = DriverManager.getConnection("jdbc:sqlite:database.db");
+		Connection connection = DriverManager.getConnection("jdbc:sqlite:"+System.getenv("APP_MLP_QUALAR_HOME")+"database.db");
 
 		connection.setAutoCommit(false);
 		
